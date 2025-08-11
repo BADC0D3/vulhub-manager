@@ -5,17 +5,120 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vulhub Manager</title>
     <style>
+        :root {
+            /* Light mode colors */
+            --bg-gradient-start: #667eea;
+            --bg-gradient-end: #764ba2;
+            --text-primary: #333;
+            --text-secondary: #666;
+            --text-white: white;
+            --bg-white: white;
+            --bg-card: rgba(255,255,255,0.1);
+            --bg-card-solid: white;
+            --border-color: #e0e0e0;
+            --border-light: rgba(255,255,255,0.2);
+            --shadow: rgba(0,0,0,0.1);
+            --shadow-dark: rgba(0,0,0,0.3);
+            --running-bg: #e6f7ff;
+            --running-border: #1890ff;
+            --stopped-bg: #fff7e6;
+            --stopped-border: #ffa940;
+            --success-bg: #28a745;
+            --success-hover: #218838;
+            --danger-bg: #dc3545;
+            --danger-hover: #c82333;
+            --warning-bg: #ffc107;
+            --warning-hover: #e0a800;
+            --info-bg: #17a2b8;
+            --info-hover: #138496;
+            --modal-bg: rgba(0,0,0,0.5);
+            --code-bg: #f8f9fa;
+            --code-text: #e83e8c;
+            --highlight-bg: #fff3cd;
+            --highlight-border: #ffeaa7;
+            --tag-bg: #f0f0f0;
+            --tag-text: #666;
+            --link-color: #007bff;
+            --link-hover: #0056b3;
+        }
+
+        [data-theme="dark"] {
+            /* Dark mode colors */
+            --bg-gradient-start: #1a1a2e;
+            --bg-gradient-end: #16213e;
+            --text-primary: #e0e0e0;
+            --text-secondary: #b0b0b0;
+            --text-white: #e0e0e0;
+            --bg-white: #0f3460;
+            --bg-card: rgba(30,30,45,0.7);
+            --bg-card-solid: #1e1e2e;
+            --border-color: #404050;
+            --border-light: rgba(64,64,80,0.5);
+            --shadow: rgba(0,0,0,0.3);
+            --shadow-dark: rgba(0,0,0,0.5);
+            --running-bg: #1a3a52;
+            --running-border: #4a9eff;
+            --stopped-bg: #4a3a1a;
+            --stopped-border: #ffb84a;
+            --success-bg: #2ea043;
+            --success-hover: #238636;
+            --danger-bg: #da3633;
+            --danger-hover: #b62324;
+            --warning-bg: #bb8009;
+            --warning-hover: #9e6a03;
+            --info-bg: #1f6feb;
+            --info-hover: #1158c7;
+            --modal-bg: rgba(0,0,0,0.8);
+            --code-bg: #2d2d3d;
+            --code-text: #ff79c6;
+            --highlight-bg: #3a3a2a;
+            --highlight-border: #5a5a4a;
+            --tag-bg: #2a2a3a;
+            --tag-text: #a0a0a0;
+            --link-color: #58a6ff;
+            --link-hover: #79b8ff;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
         }
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
             min-height: 100vh;
-            color: #333;
+            color: var(--text-primary);
+        }
+
+        /* Dark mode toggle button */
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: 50px;
+            padding: 10px 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-white);
+            font-size: 16px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            background: var(--bg-card-solid);
+            transform: scale(1.05);
+        }
+
+        .theme-toggle-icon {
+            font-size: 20px;
         }
 
         /* Main App Styles */
@@ -28,14 +131,14 @@
         .header {
             text-align: center;
             margin-bottom: 40px;
-            color: white;
+            color: var(--text-white);
             position: relative;
         }
         
         .header h1 {
             font-size: 3em;
             margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            text-shadow: 2px 2px 4px var(--shadow-dark);
         }
         
         .header p {
@@ -52,13 +155,13 @@
         }
         
         .stat-card {
-            background: rgba(255,255,255,0.1);
+            background: var(--bg-card);
             border-radius: 12px;
             padding: 20px;
             text-align: center;
-            color: white;
+            color: var(--text-white);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.2);
+            border: 1px solid var(--border-light);
         }
         
         .stat-number {
@@ -68,11 +171,11 @@
         }
         
         .search-container {
-            background: white;
+            background: var(--bg-card-solid);
             border-radius: 12px;
             padding: 20px;
             margin-bottom: 30px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            box-shadow: 0 8px 32px var(--shadow);
         }
         
         .search-controls {
@@ -86,23 +189,26 @@
             flex: 1;
             min-width: 250px;
             padding: 15px;
-            border: 2px solid #e0e0e0;
+            border: 2px solid var(--border-color);
             border-radius: 8px;
             font-size: 16px;
             transition: border-color 0.3s;
+            background: var(--bg-white);
+            color: var(--text-primary);
         }
         
         .search-box:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: var(--bg-gradient-start);
         }
         
         .filter-dropdown {
             padding: 12px 20px;
-            border: 2px solid #e0e0e0;
+            border: 2px solid var(--border-color);
             border-radius: 8px;
             font-size: 16px;
-            background: white;
+            background: var(--bg-white);
+            color: var(--text-primary);
             cursor: pointer;
             transition: border-color 0.3s;
             min-width: 150px;
@@ -110,17 +216,19 @@
         
         .filter-dropdown:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: var(--bg-gradient-start);
         }
         
         .filter-dropdown option {
             padding: 8px;
+            background: var(--bg-white);
+            color: var(--text-primary);
         }
         
         .filter-dropdown option[disabled] {
             font-style: italic;
-            color: #999;
-            background: #f8f8f8;
+            color: var(--text-secondary);
+            background: var(--bg-card-solid);
         }
         
         .filter-dropdown option[data-category="true"] {
@@ -128,7 +236,7 @@
         }
         
         .refresh-btn {
-            background: #28a745;
+            background: var(--success-bg);
             color: white;
             border: none;
             padding: 12px 20px;
@@ -140,7 +248,7 @@
         }
         
         .refresh-btn:hover {
-            background: #218838;
+            background: var(--success-hover);
         }
         
         .environments-grid {
@@ -150,10 +258,10 @@
         }
         
         .environment-card {
-            background: white;
+            background: var(--bg-card-solid);
             border-radius: 12px;
             padding: 25px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px var(--shadow);
             transition: transform 0.3s, box-shadow 0.3s;
             position: relative;
             overflow: hidden;
@@ -161,7 +269,7 @@
         
         .environment-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+            box-shadow: 0 12px 24px var(--shadow);
         }
         
         .card-header {
@@ -174,12 +282,12 @@
         .environment-name {
             font-size: 1.4em;
             font-weight: 600;
-            color: #2c3e50;
+            color: var(--text-primary);
             margin-bottom: 5px;
         }
         
         .environment-category {
-            color: #7f8c8d;
+            color: var(--text-secondary);
             font-size: 0.9em;
             text-transform: uppercase;
             letter-spacing: 1px;
@@ -194,13 +302,15 @@
         }
         
         .status-running {
-            background: #d4edda;
-            color: #155724;
+            background: var(--running-bg);
+            color: var(--running-border);
+            border: 1px solid var(--running-border);
         }
         
         .status-stopped {
-            background: #f8d7da;
-            color: #721c24;
+            background: var(--stopped-bg);
+            color: var(--stopped-border);
+            border: 1px solid var(--stopped-border);
         }
         
         .environment-details {
@@ -216,13 +326,13 @@
         
         .detail-label {
             font-weight: 600;
-            color: #666;
+            color: var(--text-secondary);
             width: 100px;
             flex-shrink: 0;
         }
         
         .detail-value {
-            color: #333;
+            color: var(--text-primary);
             flex: 1;
         }
         
@@ -233,32 +343,32 @@
         }
         
         .port-tag, .service-tag {
-            background: #e9ecef;
+            background: var(--tag-bg);
             padding: 4px 8px;
             border-radius: 4px;
             font-size: 0.85em;
-            color: #495057;
+            color: var(--tag-text);
         }
         
         .port-link {
             text-decoration: none;
             transition: all 0.3s ease;
-            background: #e3f2fd;
-            color: #1976d2;
-            border: 1px solid #bbdefb;
+            background: var(--link-color);
+            color: var(--text-white);
+            border: 1px solid var(--link-color);
         }
         
         .port-link:hover {
-            background: #1976d2;
-            color: white;
+            background: var(--link-hover);
+            color: var(--text-white);
             transform: translateY(-2px);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px var(--shadow);
         }
         
         .actions {
             display: flex;
             gap: 10px;
-            border-top: 1px solid #e0e0e0;
+            border-top: 1px solid var(--border-color);
             padding-top: 15px;
         }
         
@@ -278,41 +388,41 @@
         }
         
         .btn-start {
-            background: #28a745;
-            color: white;
+            background: var(--success-bg);
+            color: var(--text-white);
         }
         
         .btn-start:hover {
-            background: #218838;
+            background: var(--success-hover);
             transform: translateY(-2px);
         }
         
         .btn-stop {
-            background: #dc3545;
-            color: white;
+            background: var(--danger-bg);
+            color: var(--text-white);
         }
         
         .btn-stop:hover {
-            background: #c82333;
+            background: var(--danger-hover);
             transform: translateY(-2px);
         }
         
         .btn-logs {
-            background: #17a2b8;
-            color: white;
+            background: var(--info-bg);
+            color: var(--text-white);
         }
         
         .btn-logs:hover {
-            background: #138496;
+            background: var(--info-hover);
         }
         
         .btn-details {
-            background: #6c757d;
-            color: white;
+            background: var(--text-secondary);
+            color: var(--text-white);
         }
         
         .btn-details:hover {
-            background: #5a6268;
+            background: var(--text-primary);
         }
         
         .btn:disabled {
@@ -326,7 +436,7 @@
             height: 14px;
             border: 2px solid rgba(255,255,255,0.3);
             border-radius: 50%;
-            border-top-color: white;
+            border-top-color: var(--text-white);
             animation: spin 1s ease-in-out infinite;
         }
         
@@ -337,11 +447,12 @@
         .no-environments {
             text-align: center;
             padding: 60px;
-            color: white;
+            color: var(--text-primary);
             font-size: 1.2em;
-            background: rgba(255,255,255,0.1);
+            background: var(--bg-card-solid);
             border-radius: 12px;
             backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
         }
         
         .modal {
@@ -352,26 +463,26 @@
             top: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0,0,0,0.5);
+            background-color: var(--modal-bg);
             backdrop-filter: blur(5px);
         }
         
         .modal-content {
-            background-color: white;
+            background-color: var(--bg-white);
             margin: 50px auto;
             border-radius: 12px;
             width: 90%;
             max-width: 1000px;
             max-height: 80vh;
             overflow: hidden;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            box-shadow: 0 20px 60px var(--shadow-dark);
             display: flex;
             flex-direction: column;
         }
         
         .modal-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+            color: var(--text-white);
             padding: 20px 30px;
             display: flex;
             justify-content: space-between;
@@ -385,7 +496,7 @@
         .modal-close {
             background: none;
             border: none;
-            color: white;
+            color: var(--text-white);
             font-size: 28px;
             cursor: pointer;
             opacity: 0.8;
@@ -416,18 +527,24 @@
             overflow-y: auto;
         }
         
+        [data-theme="dark"] .logs-container,
+        [data-theme="dark"] .logs-content {
+            background: #0d1117;
+            color: #58ff58;
+        }
+        
         .details-content {
             line-height: 1.8;
         }
         
         .details-content h3 {
-            color: #667eea;
+            color: var(--bg-gradient-start);
             margin-top: 20px;
             margin-bottom: 10px;
         }
         
         .details-content pre {
-            background: #f5f5f5;
+            background: var(--code-bg);
             padding: 15px;
             border-radius: 6px;
             overflow-x: auto;
@@ -438,7 +555,7 @@
         }
         
         .readme-content {
-            background: #f8f9fa;
+            background: var(--code-bg);
             padding: 20px;
             border-radius: 8px;
             margin-top: 15px;
@@ -466,7 +583,7 @@
             top: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0,0,0,0.9);
+            background-color: var(--modal-bg);
             cursor: pointer;
         }
         
@@ -487,9 +604,9 @@
             right: 20px;
             padding: 15px 25px;
             border-radius: 8px;
-            color: white;
+            color: var(--text-white);
             font-weight: 500;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 12px var(--shadow);
             transform: translateX(400px);
             transition: transform 0.3s ease-in-out;
             z-index: 2000;
@@ -500,21 +617,21 @@
         }
         
         .notification.success {
-            background: #28a745;
+            background: var(--success-bg);
         }
         
         .notification.error {
-            background: #dc3545;
+            background: var(--danger-bg);
         }
         
         .connection-status {
             position: fixed;
             bottom: 20px;
             right: 20px;
-            background: rgba(255,255,255,0.9);
+            background: var(--bg-white);
             padding: 10px 20px;
             border-radius: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px var(--shadow);
             display: flex;
             align-items: center;
             gap: 10px;
@@ -525,16 +642,16 @@
             width: 10px;
             height: 10px;
             border-radius: 50%;
-            background: #dc3545;
+            background: var(--danger-bg);
         }
         
         .status-indicator.connected {
-            background: #28a745;
+            background: var(--success-bg);
         }
         
         .loading-message {
             text-align: center;
-            color: white;
+            color: var(--text-white);
             font-size: 1.2em;
             padding: 40px;
         }
@@ -549,14 +666,14 @@
             padding: 8px 16px;
             border: none;
             border-radius: 6px;
-            background: #667eea;
-            color: white;
+            background: var(--bg-gradient-start);
+            color: var(--text-white);
             cursor: pointer;
             transition: background 0.3s;
         }
         
         .log-controls button:hover {
-            background: #5a67d8;
+            background: var(--bg-gradient-end);
         }
         
         @media (max-width: 768px) {
@@ -604,6 +721,10 @@
             <div class="header">
                 <h1>🐳 Vulhub Manager</h1>
                 <p>Manage your vulnerable Docker environments with ease</p>
+                <button class="theme-toggle" onclick="toggleTheme()" title="Toggle dark mode">
+                    <span class="theme-toggle-icon" id="themeIcon">🌙</span>
+                    <span id="themeText">Dark</span>
+                </button>
             </div>
 
             <div class="stats-bar">
@@ -690,6 +811,35 @@
         let logStreamController = null;
         let appConfig = { appHost: null };
 
+        // Dark mode functionality
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            updateThemeToggle(savedTheme);
+        }
+
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeToggle(newTheme);
+        }
+
+        function updateThemeToggle(theme) {
+            const themeIcon = document.getElementById('themeIcon');
+            const themeText = document.getElementById('themeText');
+            
+            if (theme === 'dark') {
+                themeIcon.textContent = '☀️';
+                themeText.textContent = 'Light';
+            } else {
+                themeIcon.textContent = '🌙';
+                themeText.textContent = 'Dark';
+            }
+        }
+
         // Generate application URLs based on the environment configuration
         function generateApplicationUrls(env) {
             const urls = [];
@@ -758,6 +908,9 @@
 
         // Initialize the application
         async function initializeApp() {
+            // Initialize theme
+            initTheme();
+            
             // Load configuration first
             await loadConfig();
             
@@ -1000,7 +1153,12 @@
             
             grid.innerHTML = '';
             
-            filteredEnvironments.forEach(env => {
+            // Sort environments by name (case-insensitive)
+            const sortedEnvironments = [...filteredEnvironments].sort((a, b) => {
+                return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
+            });
+            
+            sortedEnvironments.forEach(env => {
                 const card = createEnvironmentCard(env);
                 grid.appendChild(card);
             });
