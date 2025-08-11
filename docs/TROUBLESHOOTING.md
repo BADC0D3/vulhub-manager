@@ -42,7 +42,7 @@ This is normal behavior. VulhubWeb needs a moment to detect running containers:
    docker stop CONTAINER_ID
    ```
 
-3. Check the PORT_MAPPING.md file for all port assignments
+3. Check the [PORT_MAPPING.md](../vulnerabilities/PORT_MAPPING.md) file for all port assignments
 
 ### Issue: Cannot Access Applications
 

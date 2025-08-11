@@ -141,10 +141,10 @@ npm run dev     # Start with auto-reload
 
 ### 📚 Available Guides
 
-- **[Documentation Index](DOCUMENTATION_INDEX.md)** - Complete index of all documentation files
-- **[Deployment Guide](DEPLOYMENT.md)** - Production deployment, reverse proxy setup, security hardening
-- **[Host Configuration](HOST_CONFIGURATION.md)** - Dynamic host configuration, remote access setup
-- **[Troubleshooting Guide](TROUBLESHOOTING.md)** - Comprehensive troubleshooting solutions
+- **[Documentation Index](docs/DOCUMENTATION_INDEX.md)** - Complete index of all documentation files
+- **[Deployment Guide](docs/DEPLOYMENT.md)** - Production deployment, reverse proxy setup, security hardening
+- **[Host Configuration](docs/HOST_CONFIGURATION.md)** - Dynamic host configuration, remote access setup
+- **[Troubleshooting Guide](docs/TROUBLESHOOTING.md)** - Comprehensive troubleshooting solutions
 - **[Vulnerable Apps Overview](vulnerabilities/README.md)** - Details about all 25 vulnerable applications
 - **[Port Mapping Reference](vulnerabilities/PORT_MAPPING.md)** - Complete port assignments and conflict resolution
 - **[Quick Start Guide](vulnerabilities/QUICK_START.md)** - Quick access URLs and default credentials
@@ -176,13 +176,13 @@ npm run dev     # Start with auto-reload
 4. **WebSocket Connection Issues**
    - Check firewall settings
    - Verify CORS configuration matches your access URL
-   - See [Host Configuration](HOST_CONFIGURATION.md) for remote access
+   - See [Host Configuration](docs/HOST_CONFIGURATION.md) for remote access
 
 5. **Environment Start Failures**
    - Check if another environment is already running (single instance limit)
    - Some Docker images may need to be pulled first
    - Check Docker logs for specific errors
-   - See [Troubleshooting Guide](TROUBLESHOOTING.md) for detailed solutions
+   - See [Troubleshooting Guide](docs/TROUBLESHOOTING.md) for detailed solutions
 
 ## Security Considerations
 

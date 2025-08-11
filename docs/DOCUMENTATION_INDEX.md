@@ -3,7 +3,7 @@
 ## 📚 Main Documentation Files
 
 ### Core Documentation
-1. **[README.md](README.md)**
+1. **[README.md](../README.md)**
    - Main project documentation
    - Features, installation, configuration
    - Quick start guide
@@ -31,19 +31,19 @@
 ## 🔒 Vulnerable Applications Documentation
 
 ### Overview Files
-1. **[vulnerabilities/README.md](vulnerabilities/README.md)**
+1. **[vulnerabilities/README.md](../vulnerabilities/README.md)**
    - Overview of all 25 vulnerable applications
    - Categories and descriptions
    - Security warnings
    - Quick reference
 
-2. **[vulnerabilities/PORT_MAPPING.md](vulnerabilities/PORT_MAPPING.md)**
+2. **[vulnerabilities/PORT_MAPPING.md](../vulnerabilities/PORT_MAPPING.md)**
    - Complete port assignments table
    - Conflict resolution guide
    - Port checking commands
    - Recommendations
 
-3. **[vulnerabilities/QUICK_START.md](vulnerabilities/QUICK_START.md)**
+3. **[vulnerabilities/QUICK_START.md](../vulnerabilities/QUICK_START.md)**
    - Quick access URLs for all applications
    - Default credentials
    - Initial setup steps
@@ -60,41 +60,41 @@ Each vulnerable application has its own detailed README with:
 **All 25 Applications Have READMEs:**
 
 #### Web Applications (5)
-- `vulnerabilities/web/juice-shop/README.md` - OWASP Juice Shop
-- `vulnerabilities/web/dvwa/README.md` - Damn Vulnerable Web Application
-- `vulnerabilities/web/webgoat/README.md` - WebGoat & WebWolf
-- `vulnerabilities/web/nodegoat/README.md` - DVNA (NodeJS vulnerabilities)
-- `vulnerabilities/web/wordpress-vulnerable/README.md` - WordPress vulnerabilities
+- `../vulnerabilities/web/juice-shop/README.md` - OWASP Juice Shop
+- `../vulnerabilities/web/dvwa/README.md` - Damn Vulnerable Web Application
+- `../vulnerabilities/web/webgoat/README.md` - WebGoat & WebWolf
+- `../vulnerabilities/web/nodegoat/README.md` - DVNA (NodeJS vulnerabilities)
+- `../vulnerabilities/web/wordpress-vulnerable/README.md` - WordPress vulnerabilities
 
 #### API Applications (5)
-- `vulnerabilities/api/crapi/README.md` - Completely Ridiculous API
-- `vulnerabilities/api/vampi/README.md` - Vulnerable API
-- `vulnerabilities/api/dvrestaurant/README.md` - Restaurant API vulnerabilities
-- `vulnerabilities/api/dvga/README.md` - Damn Vulnerable GraphQL Application
-- `vulnerabilities/api/graphql-security/README.md` - GraphQL security testing
+- `../vulnerabilities/api/crapi/README.md` - Completely Ridiculous API
+- `../vulnerabilities/api/vampi/README.md` - Vulnerable API
+- `../vulnerabilities/api/dvrestaurant/README.md` - Restaurant API vulnerabilities
+- `../vulnerabilities/api/dvga/README.md` - Damn Vulnerable GraphQL Application
+- `../vulnerabilities/api/graphql-security/README.md` - GraphQL security testing
 
 #### Container/Cloud Applications (3)
-- `vulnerabilities/container/docker-escape/README.md` - Docker escape techniques
-- `vulnerabilities/container/kubernetes-goat/README.md` - Kubernetes vulnerabilities
-- `vulnerabilities/container/serverless-goat/README.md` - Serverless/FaaS vulnerabilities
+- `../vulnerabilities/container/docker-escape/README.md` - Docker escape techniques
+- `../vulnerabilities/container/kubernetes-goat/README.md` - Kubernetes vulnerabilities
+- `../vulnerabilities/container/serverless-goat/README.md` - Serverless/FaaS vulnerabilities
 
 #### Framework Applications (5)
-- `vulnerabilities/framework/django-vulnerable/README.md` - Django vulnerabilities
-- `vulnerabilities/framework/railsgoat/README.md` - Ruby on Rails vulnerabilities
-- `vulnerabilities/framework/spring-vulnerable/README.md` - Spring Boot vulnerabilities
-- `vulnerabilities/framework/laravel-vulnerable/README.md` - Laravel vulnerabilities
-- `vulnerabilities/framework/express-vulnerable/README.md` - Express.js vulnerabilities
+- `../vulnerabilities/framework/django-vulnerable/README.md` - Django vulnerabilities
+- `../vulnerabilities/framework/railsgoat/README.md` - Ruby on Rails vulnerabilities
+- `../vulnerabilities/framework/spring-vulnerable/README.md` - Spring Boot vulnerabilities
+- `../vulnerabilities/framework/laravel-vulnerable/README.md` - Laravel vulnerabilities
+- `../vulnerabilities/framework/express-vulnerable/README.md` - Express.js vulnerabilities
 
 #### Real-world CVEs (4)
-- `vulnerabilities/realworld/log4shell/README.md` - Log4j RCE (CVE-2021-44228)
-- `vulnerabilities/realworld/spring4shell/README.md` - Spring RCE (CVE-2022-22965)
-- `vulnerabilities/realworld/struts2/README.md` - Apache Struts vulnerabilities
-- `vulnerabilities/realworld/gitlab-vulnerable/README.md` - GitLab CE vulnerabilities
+- `../vulnerabilities/realworld/log4shell/README.md` - Log4j RCE (CVE-2021-44228)
+- `../vulnerabilities/realworld/spring4shell/README.md` - Spring RCE (CVE-2022-22965)
+- `../vulnerabilities/realworld/struts2/README.md` - Apache Struts vulnerabilities
+- `../vulnerabilities/realworld/gitlab-vulnerable/README.md` - GitLab CE vulnerabilities
 
 #### Advanced Techniques (3)
-- `vulnerabilities/advanced/xxe-lab/README.md` - XML External Entity attacks
-- `vulnerabilities/advanced/ssrf-lab/README.md` - Server-Side Request Forgery
-- `vulnerabilities/advanced/deserialization-lab/README.md` - Java/Python/PHP deserialization
+- `../vulnerabilities/advanced/xxe-lab/README.md` - XML External Entity attacks
+- `../vulnerabilities/advanced/ssrf-lab/README.md` - Server-Side Request Forgery
+- `../vulnerabilities/advanced/deserialization-lab/README.md` - Java/Python/PHP deserialization
 
 ## 🗂️ Documentation Organization
 
@@ -121,10 +121,10 @@ The following files were removed during cleanup as they were temporary or redund
 
 ## 🚀 Quick Navigation
 
-- **New to VulhubWeb?** Start with [README.md](README.md)
+- **New to VulhubWeb?** Start with [README.md](../README.md)
 - **Setting up production?** See [DEPLOYMENT.md](DEPLOYMENT.md)
 - **Remote access needed?** Check [HOST_CONFIGURATION.md](HOST_CONFIGURATION.md)
 - **Having issues?** Read [TROUBLESHOOTING.md](TROUBLESHOOTING.md)
-- **Looking for apps?** Browse [vulnerabilities/README.md](vulnerabilities/README.md)
-- **Need ports info?** Reference [vulnerabilities/PORT_MAPPING.md](vulnerabilities/PORT_MAPPING.md)
-- **Want quick access?** Use [vulnerabilities/QUICK_START.md](vulnerabilities/QUICK_START.md) 
+- **Looking for apps?** Browse [vulnerabilities/README.md](../vulnerabilities/README.md)
+- **Need ports info?** Reference [vulnerabilities/PORT_MAPPING.md](../vulnerabilities/PORT_MAPPING.md)
+- **Want quick access?** Use [vulnerabilities/QUICK_START.md](../vulnerabilities/QUICK_START.md) 
