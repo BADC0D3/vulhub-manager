@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  spring4shell:
+    image: vulfocus/spring-cloud-function-spel-rce:latest
+    container_name: spring4shell
+    ports:
+      - "8085:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=vulnerable
+    restart: unless-stopped
