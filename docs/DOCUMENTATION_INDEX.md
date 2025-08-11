@@ -28,6 +28,12 @@
    - Debug commands
    - Getting help
 
+5. **[Learning Center](learning/README.md)**
+   - Interactive security tutorials
+   - Progressive hint system
+   - Hands-on vulnerability practice
+   - Defense strategies
+
 ## 🔒 Vulnerable Applications Documentation
 
 ### Overview Files

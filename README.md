@@ -16,6 +16,9 @@ A web-based interface for managing Vulhub (Vulnerable Docker Environments). This
 - 🚫 **Single Instance Limit**: Only one environment can run at a time (configurable)
 - 🌐 **Dynamic Host Support**: Automatically adapts to any hostname or IP address
 - 🔗 **Clickable Links**: Direct access to vulnerable applications from the interface
+- 🎓 **Learning Center**: Interactive tutorials for learning about security vulnerabilities
+- 💡 **Progressive Hints**: Step-by-step guidance with spoiler-protected solutions
+- 📊 **Progress Tracking**: Track your learning progress across tutorials
 
 ## Prerequisites
 

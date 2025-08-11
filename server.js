@@ -80,13 +80,13 @@ app.use(morgan('combined', { stream: { write: message => logger.info(message.tri
 // Rate limiting
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100, // Limit each IP to 100 requests per windowMs
+    max: 1000, // Limit each IP to 100 requests per windowMs
     message: 'Too many requests from this IP, please try again later.'
 });
 
 const strictLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 20, // Stricter limit for sensitive operations
+    max: 200, // Stricter limit for sensitive operations
     message: 'Too many requests for this operation, please try again later.'
 });
 
@@ -372,6 +372,42 @@ app.get('/api/config', (req, res) => {
         appHost: process.env.APP_HOST || null,
         // Add other configuration values as needed
     });
+});
+
+// Learning content endpoint
+app.get('/api/learning/:tutorial', async (req, res) => {
+    const tutorial = req.params.tutorial;
+    const allowedTutorials = [
+        'sql-injection', 'xss', 'broken-authentication', 'xxe', 'ssrf',
+        'bola', 'rate-limiting', 'jwt', 'graphql',
+        'docker-escape', 'kubernetes',
+        'log4shell', 'spring4shell', 'deserialization'
+    ];
+    
+    if (!allowedTutorials.includes(tutorial)) {
+        return res.status(404).json({ error: 'Tutorial not found' });
+    }
+    
+    try {
+        const tutorialPath = path.join(__dirname, 'docs', 'learning', `${tutorial}.md`);
+        
+        // Check if file exists
+        if (!fs.existsSync(tutorialPath)) {
+            return res.status(404).json({ error: 'Tutorial file not found' });
+        }
+        
+        const content = fs.readFileSync(tutorialPath, 'utf8');
+        res.json({ 
+            id: tutorial,
+            content: content,
+            title: tutorial.split('-').map(word => 
+                word.charAt(0).toUpperCase() + word.slice(1)
+            ).join(' ')
+        });
+    } catch (error) {
+        logger.error('Error loading tutorial', { tutorial, error: error.message });
+        res.status(500).json({ error: 'Failed to load tutorial' });
+    }
 });
 
 // Get all environments
