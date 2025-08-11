@@ -1,0 +1,88 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:14
+    container_name: crapi-postgres
+    environment:
+      POSTGRES_USER: crapi
+      POSTGRES_PASSWORD: crapi
+      POSTGRES_DB: crapi
+
+  mongodb:
+    image: mongo:4.4
+    container_name: crapi-mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: crapi
+      MONGO_INITDB_ROOT_PASSWORD: crapi
+
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: crapi-mailhog
+    ports:
+      - "8025:8025"
+
+  crapi-web:
+    image: crapi/crapi-web:latest
+    container_name: crapi-web
+    ports:
+      - "8888:80"
+    depends_on:
+      - crapi-identity
+      - crapi-community
+      - crapi-workshop
+    environment:
+      - COMMUNITY_SERVICE=crapi-community:8087
+      - IDENTITY_SERVICE=crapi-identity:8080
+      - WORKSHOP_SERVICE=crapi-workshop:8000
+
+  crapi-identity:
+    image: crapi/crapi-identity:latest
+    container_name: crapi-identity
+    depends_on:
+      - postgres
+      - mongodb
+      - mailhog
+    environment:
+      - DB_HOST=postgres
+      - DB_DRIVER=postgresql
+      - DB_USER=crapi
+      - DB_PASSWORD=crapi
+      - DB_NAME=crapi
+      - MONGO_DB_HOST=mongodb
+      - MONGO_DB_USERNAME=crapi
+      - MONGO_DB_PASSWORD=crapi
+      - SMTP_HOST=mailhog
+      - SMTP_PORT=1025
+
+  crapi-community:
+    image: crapi/crapi-community:latest
+    container_name: crapi-community
+    depends_on:
+      - postgres
+      - mongodb
+    environment:
+      - DB_HOST=postgres
+      - DB_DRIVER=postgresql
+      - DB_USER=crapi
+      - DB_PASSWORD=crapi
+      - DB_NAME=crapi
+      - MONGO_DB_HOST=mongodb
+      - MONGO_DB_USERNAME=crapi
+      - MONGO_DB_PASSWORD=crapi
+
+  crapi-workshop:
+    image: crapi/crapi-workshop:latest
+    container_name: crapi-workshop
+    depends_on:
+      - postgres
+      - mongodb
+    environment:
+      - DB_HOST=postgres
+      - DB_DRIVER=postgresql
+      - DB_USER=crapi
+      - DB_PASSWORD=crapi
+      - DB_NAME=crapi
+      - MONGO_DB_HOST=mongodb
+      - MONGO_DB_USERNAME=crapi
+      - MONGO_DB_PASSWORD=crapi

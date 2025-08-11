@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  java-deser:
+    build:
+      context: ./java
+      dockerfile: Dockerfile
+    container_name: java-deserialization
+    ports:
+      - "8092:8080"
+    environment:
+      - ENABLE_GADGETS=true
+    restart: unless-stopped
+
+  python-deser:
+    build:
+      context: ./python
+      dockerfile: Dockerfile
+    container_name: python-deserialization
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=development
+    restart: unless-stopped
+
+  php-deser:
+    build:
+      context: ./php
+      dockerfile: Dockerfile
+    container_name: php-deserialization
+    ports:
+      - "8095:80"
+    restart: unless-stopped

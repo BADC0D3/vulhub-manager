@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  webgoat:
+    image: webgoat/webgoat:latest
+    container_name: webgoat
+    ports:
+      - "8082:8080"
+      - "9090:9090"
+    environment:
+      - TZ=UTC
+    restart: unless-stopped

@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  # Alternative: Damn Vulnerable NodeJS Application
+  dvna:
+    image: appsecco/dvna:sqlite
+    container_name: dvna
+    ports:
+      - "4000:9090"
+    environment:
+      - SQLITE_DB=dvna.db
+    restart: unless-stopped

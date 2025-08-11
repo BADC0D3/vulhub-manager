@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  spring-db:
+    image: mysql:8.0
+    container_name: spring-db
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=vulnerable
+      - MYSQL_USER=vulnerable
+      - MYSQL_PASSWORD=vulnerable
+
+  spring-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: spring-vulnerable
+    ports:
+      - "8084:8080"
+    depends_on:
+      - spring-db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://spring-db:3306/vulnerable
+      - SPRING_DATASOURCE_USERNAME=vulnerable
+      - SPRING_DATASOURCE_PASSWORD=vulnerable
+    restart: unless-stopped

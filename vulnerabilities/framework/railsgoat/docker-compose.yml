@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  railsgoat:
+    image: owasp/railsgoat:latest
+    container_name: railsgoat
+    ports:
+      - "3002:3000"
+    environment:
+      - RAILS_ENV=development
+    restart: unless-stopped

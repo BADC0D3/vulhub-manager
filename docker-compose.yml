@@ -6,7 +6,7 @@ services:
       - "3000:3000"
     volumes:
       # Mount the vulhub directory (adjust the path as needed)
-      - ../vulhub:/vulhub:ro
+      - ./vulnerabilities:/vulhub:ro
       # Mount Docker socket to allow container management
       # WARNING: This grants full Docker access - use with caution
       - /var/run/docker.sock:/var/run/docker.sock
@@ -27,6 +27,10 @@ services:
       - STOP_ON_SHUTDOWN=false
       # Logging
       - LOG_LEVEL=debug
+      # Application host URL (for accessing vulnerable apps)
+      # Set this to your server's IP or hostname if not using localhost
+      # Example: APP_HOST=192.168.1.100 or APP_HOST=myserver.local
+      - APP_HOST=${APP_HOST:-}
     restart: unless-stopped
     container_name: vulhub-manager
     labels:

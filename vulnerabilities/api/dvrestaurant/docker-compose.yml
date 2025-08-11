@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  dvrestaurant:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: dvrestaurant
+    ports:
+      - "8083:8080"
+    environment:
+      - JWT_SECRET=your-secret-key
+    restart: unless-stopped

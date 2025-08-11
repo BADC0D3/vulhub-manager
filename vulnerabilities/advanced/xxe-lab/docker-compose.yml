@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  xxe-lab:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: xxe-lab
+    ports:
+      - "8090:8080"
+    environment:
+      - ENABLE_XXE=true
+    restart: unless-stopped

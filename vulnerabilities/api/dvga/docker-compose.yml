@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  dvga:
+    image: dolevf/dvga:latest
+    container_name: dvga
+    ports:
+      - "5013:5013"
+    environment:
+      - WEB_HOST=0.0.0.0
+      - WEB_PORT=5013
+    restart: unless-stopped

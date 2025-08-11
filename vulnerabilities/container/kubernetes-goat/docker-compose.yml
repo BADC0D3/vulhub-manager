@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  # Kubernetes Goat images are no longer available
+  # Alternative: Use a simple vulnerable container
+  vulnerable-container:
+    image: vulnerables/web-dvwa:latest
+    container_name: kubernetes-goat-demo
+    ports:
+      - "1234:80"
+    environment:
+      - RECAPTCHA_PRIV_KEY=
+      - RECAPTCHA_PUB_KEY=
+    restart: unless-stopped

@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  gitlab:
+    image: gitlab/gitlab-ce:13.12.0-ce.0
+    container_name: gitlab-vulnerable
+    hostname: gitlab.example.com
+    ports:
+      - "8088:80"
+      - "8444:443"
+      - "2223:22"
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'http://localhost:8080'
+        gitlab_rails['gitlab_shell_ssh_port'] = 2222
+    volumes:
+      - './config:/etc/gitlab'
+      - './logs:/var/log/gitlab'
+      - './data:/var/opt/gitlab'
+    restart: unless-stopped

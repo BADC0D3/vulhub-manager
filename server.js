@@ -299,7 +299,7 @@ async function scanVulhubEnvironments(forceRefresh = false) {
                             const envId = `${category}_${vuln}`.replace(/[^a-zA-Z0-9_-]/g, '_');
                             const envInfo = {
                                 id: envId,
-                                name: `${category.toUpperCase()} - ${vuln}`,
+                                name: `${vuln}`,
                                 category: category,
                                 vulnerability: vuln,
                                 path: path.join(category, vuln),
@@ -364,6 +364,14 @@ async function checkEnvironmentStatus(env) {
 // Health check endpoint
 app.get('/api/health', (req, res) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+// Configuration endpoint
+app.get('/api/config', (req, res) => {
+    res.json({ 
+        appHost: process.env.APP_HOST || null,
+        // Add other configuration values as needed
+    });
 });
 
 // Get all environments
@@ -979,6 +987,50 @@ server.listen(PORT, async () => {
         });
     }
     
+    // Function to check for running environments
+    async function checkRunningEnvironments() {
+        try {
+            const envs = await scanVulhubEnvironments();
+            let runningCount = 0;
+            
+            // Clear current running environments to rebuild from Docker state
+            runningEnvironments.clear();
+            
+            for (const env of envs) {
+                try {
+                    const projectName = generateProjectName(env.id);
+                    const psResult = await execDockerCompose(['ps', '-q'], env.fullPath, {
+                        projectName,
+                        timeout: 5000
+                    });
+                    
+                    if (psResult.stdout.trim()) {
+                        // Environment is running
+                        runningEnvironments.set(env.id, {
+                            ...env,
+                            startedAt: new Date(),
+                            startedBy: 'pre-existing',
+                            projectName
+                        });
+                        runningCount++;
+                        logger.debug('Found running environment', { 
+                            id: env.id, 
+                            name: env.name,
+                            projectName 
+                        });
+                    }
+                } catch (error) {
+                    // Ignore errors, environment is probably not running
+                }
+            }
+            
+            return runningCount;
+        } catch (error) {
+            logger.error('Error checking running environments', { error: error.message });
+            return 0;
+        }
+    }
+    
     // Initial scan of environments
     try {
         const envs = await scanVulhubEnvironments();
@@ -986,39 +1038,29 @@ server.listen(PORT, async () => {
         
         // Check for already running environments
         logger.info('Checking for already running environments...');
-        let runningCount = 0;
-        
-        for (const env of envs) {
-            try {
-                const projectName = generateProjectName(env.id);
-                const psResult = await execDockerCompose(['ps', '-q'], env.fullPath, {
-                    projectName,
-                    timeout: 5000
-                });
-                
-                if (psResult.stdout.trim()) {
-                    // Environment is running
-                    runningEnvironments.set(env.id, {
-                        ...env,
-                        startedAt: new Date(),
-                        startedBy: 'pre-existing',
-                        projectName
-                    });
-                    runningCount++;
-                    logger.info('Found running environment', { 
-                        id: env.id, 
-                        name: env.name,
-                        projectName 
-                    });
-                }
-            } catch (error) {
-                // Ignore errors, environment is probably not running
-            }
-        }
+        const runningCount = await checkRunningEnvironments();
         
         if (runningCount > 0) {
             logger.info('Found pre-existing running environments', { count: runningCount });
         }
+        
+        // Periodically check for running environments (every 10 seconds)
+        setInterval(async () => {
+            try {
+                const previousCount = runningEnvironments.size;
+                const currentCount = await checkRunningEnvironments();
+                
+                // Only log if the count changed
+                if (currentCount !== previousCount) {
+                    logger.info('Running environment count changed', { 
+                        previous: previousCount, 
+                        current: currentCount 
+                    });
+                }
+            } catch (error) {
+                logger.error('Periodic environment check failed', { error: error.message });
+            }
+        }, 10000);
         
     } catch (error) {
         logger.error('Failed to scan environments', { error: error.message });

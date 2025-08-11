@@ -14,6 +14,8 @@ A web-based interface for managing Vulhub (Vulnerable Docker Environments). This
 - 🔄 **Auto-refresh**: Periodic updates to keep information current
 - 📱 **Responsive Design**: Works on desktop and mobile devices
 - 🚫 **Single Instance Limit**: Only one environment can run at a time (configurable)
+- 🌐 **Dynamic Host Support**: Automatically adapts to any hostname or IP address
+- 🔗 **Clickable Links**: Direct access to vulnerable applications from the interface
 
 ## Prerequisites
 
@@ -74,6 +76,20 @@ Key environment variables in `.env`:
 - `COMPOSE_TIMEOUT`: Docker compose operation timeout (default: 300s)
 - `SCAN_CACHE_TTL`: Environment scan cache duration (default: 300s)
 - `MAX_RUNNING_ENVIRONMENTS`: Maximum concurrent environments (default: 1)
+- `APP_HOST`: Override automatic host detection (optional, e.g., 192.168.1.100)
+
+### Docker Status Checking
+
+VulhubWeb automatically checks for running Docker containers:
+- **On Startup**: Scans all environments to detect any pre-existing running containers
+- **Every 30 seconds**: Server-side check to update the status of all environments
+- **Every 30 seconds**: Client-side refresh to update the UI with latest status
+- **On-demand**: Status is updated whenever you start/stop environments
+
+This ensures the UI always shows the correct status even if:
+- Containers are started/stopped outside of VulhubWeb
+- The VulhubWeb container is restarted
+- Multiple users are managing environments
 
 ## API Endpoints
 
@@ -121,6 +137,24 @@ npm run lint    # Run linter
 npm run dev     # Start with auto-reload
 ```
 
+## Documentation
+
+### 📚 Available Guides
+
+- **[Documentation Index](DOCUMENTATION_INDEX.md)** - Complete index of all documentation files
+- **[Deployment Guide](DEPLOYMENT.md)** - Production deployment, reverse proxy setup, security hardening
+- **[Host Configuration](HOST_CONFIGURATION.md)** - Dynamic host configuration, remote access setup
+- **[Troubleshooting Guide](TROUBLESHOOTING.md)** - Comprehensive troubleshooting solutions
+- **[Vulnerable Apps Overview](vulnerabilities/README.md)** - Details about all 25 vulnerable applications
+- **[Port Mapping Reference](vulnerabilities/PORT_MAPPING.md)** - Complete port assignments and conflict resolution
+- **[Quick Start Guide](vulnerabilities/QUICK_START.md)** - Quick access URLs and default credentials
+
+### 🎯 Quick Links
+
+- **VulhubWeb Interface**: http://localhost:3000 (or http://YOUR_HOST:3000)
+- **Total Applications**: 25 vulnerable applications across 6 categories
+- **Port Range**: 3000-8095 (all applications use unique ports)
+
 ## Troubleshooting
 
 ### Common Issues
@@ -132,19 +166,23 @@ npm run dev     # Start with auto-reload
 2. **Port Already in Use**
    - Change PORT in .env file
    - Stop conflicting services
+   - See [Port Mapping Reference](vulnerabilities/PORT_MAPPING.md)
 
 3. **Environments Not Found**
-   - Verify VULHUB_PATH is correct
+   - Verify VULHUB_PATH is correct (should be `./vulnerabilities`)
    - Check directory permissions
+   - Ensure categories structure exists (web/, api/, etc.)
 
 4. **WebSocket Connection Issues**
    - Check firewall settings
    - Verify CORS configuration matches your access URL
+   - See [Host Configuration](HOST_CONFIGURATION.md) for remote access
 
 5. **Environment Start Failures**
    - Check if another environment is already running (single instance limit)
-   - Some Vulhub environments may have configuration issues
+   - Some Docker images may need to be pulled first
    - Check Docker logs for specific errors
+   - See [Troubleshooting Guide](TROUBLESHOOTING.md) for detailed solutions
 
 ## Security Considerations
 

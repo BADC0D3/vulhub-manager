@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  django-db:
+    image: postgres:13
+    container_name: django-db
+    environment:
+      - POSTGRES_DB=vulnerable
+      - POSTGRES_USER=vulnerable
+      - POSTGRES_PASSWORD=vulnerable
+
+  django-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: django-vulnerable
+    ports:
+      - "8093:8000"
+    depends_on:
+      - django-db
+    environment:
+      - DATABASE_URL=postgresql://vulnerable:vulnerable@django-db:5432/vulnerable
+      - DEBUG=True
+      - SECRET_KEY=insecure-secret-key
+    restart: unless-stopped

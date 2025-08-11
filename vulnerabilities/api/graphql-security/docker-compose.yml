@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  graphql-security:
+    image: dolevf/dvga:latest
+    container_name: graphql-security
+    ports:
+      - "5001:5000"
+    environment:
+      - FLASK_ENV=development
+    restart: unless-stopped

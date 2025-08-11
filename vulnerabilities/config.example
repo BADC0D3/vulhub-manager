@@ -1,0 +1,27 @@
+# VulhubWeb Configuration for Vulnerable Applications
+# Copy this file to ../.env and adjust the path
+
+# Path to vulnerabilities directory
+VULHUB_PATH=/home/badc0d3/repo/vulhubWeb/vulnerabilities
+
+# Maximum concurrent environments (recommended: 1-2 for security)
+MAX_RUNNING_ENVIRONMENTS=1
+
+# Default ports (adjust if conflicts occur)
+JUICE_SHOP_PORT=3001
+DVWA_PORT=8080
+WEBGOAT_PORT=8080
+DVGA_PORT=5013
+NODEGOAT_PORT=4000
+CRAPI_PORT=8888
+VAMPI_PORT=5000
+RAILSGOAT_PORT=3002
+EXPRESS_VULNERABLE_PORT=3003
+
+# Security settings
+ENABLE_NETWORK_ISOLATION=true
+LOG_ATTACKS=true
+
+# Resource limits (optional)
+CONTAINER_MEMORY_LIMIT=512m
+CONTAINER_CPU_LIMIT=0.5 

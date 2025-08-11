@@ -240,6 +240,21 @@
             color: #495057;
         }
         
+        .port-link {
+            text-decoration: none;
+            transition: all 0.3s ease;
+            background: #e3f2fd;
+            color: #1976d2;
+            border: 1px solid #bbdefb;
+        }
+        
+        .port-link:hover {
+            background: #1976d2;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
         .actions {
             display: flex;
             gap: 10px;
@@ -673,9 +688,79 @@
         let wsReconnectTimeout = null;
         let wsPingInterval = null;
         let logStreamController = null;
+        let appConfig = { appHost: null };
+
+        // Generate application URLs based on the environment configuration
+        function generateApplicationUrls(env) {
+            const urls = [];
+            const appName = env.vulnerability.toLowerCase();
+            
+            // Use configured host if available, otherwise use current window location
+            const host = appConfig.appHost || window.location.hostname;
+            const protocol = appConfig.appHost ? 'http:' : window.location.protocol;
+            
+            // Map applications to their specific URLs with dynamic host
+            const urlMappings = {
+                'juice-shop': [{ port: '3001', url: `${protocol}//${host}:3001`, description: 'Juice Shop' }],
+                'dvwa': [{ port: '8081', url: `${protocol}//${host}:8081`, description: 'DVWA' }],
+                'webgoat': [
+                    { port: '8082', url: `${protocol}//${host}:8082/WebGoat`, description: 'WebGoat' },
+                    { port: '9090', url: `${protocol}//${host}:9090/WebWolf`, description: 'WebWolf' }
+                ],
+                'nodegoat': [{ port: '4000', url: `${protocol}//${host}:4000`, description: 'DVNA' }],
+                'wordpress-vulnerable': [{ port: '8087', url: `${protocol}//${host}:8087`, description: 'WordPress' }],
+                'crapi': [
+                    { port: '8888', url: `${protocol}//${host}:8888`, description: 'crAPI' },
+                    { port: '8025', url: `${protocol}//${host}:8025`, description: 'MailHog' }
+                ],
+                'vampi': [{ port: '5000', url: `${protocol}//${host}:5000`, description: 'VAmPI' }],
+                'dvrestaurant': [{ port: '8083', url: `${protocol}//${host}:8083`, description: 'DVRestaurant' }],
+                'dvga': [{ port: '5013', url: `${protocol}//${host}:5013/graphiql`, description: 'DVGA GraphQL' }],
+                'graphql-security': [{ port: '5001', url: `${protocol}//${host}:5001`, description: 'GraphQL Security' }],
+                'kubernetes-goat': [{ port: '1234', url: `${protocol}//${host}:1234`, description: 'K8s Goat' }],
+                'serverless-goat': [{ port: '4566', url: `${protocol}//${host}:4566`, description: 'Serverless Goat' }],
+                'django-vulnerable': [{ port: '8093', url: `${protocol}//${host}:8093`, description: 'Django Vulnerable' }],
+                'railsgoat': [{ port: '3002', url: `${protocol}//${host}:3002`, description: 'Rails Goat' }],
+                'spring-vulnerable': [{ port: '8084', url: `${protocol}//${host}:8084`, description: 'Spring Vulnerable' }],
+                'laravel-vulnerable': [{ port: '8094', url: `${protocol}//${host}:8094`, description: 'Laravel Vulnerable' }],
+                'express-vulnerable': [{ port: '3003', url: `${protocol}//${host}:3003`, description: 'Express Vulnerable' }],
+                'log4shell': [{ port: '8089', url: `${protocol}//${host}:8089`, description: 'Log4Shell' }],
+                'spring4shell': [{ port: '8085', url: `${protocol}//${host}:8085`, description: 'Spring4Shell' }],
+                'struts2': [{ port: '8086', url: `${protocol}//${host}:8086`, description: 'Struts2' }],
+                'gitlab-vulnerable': [
+                    { port: '8088', url: `${protocol}//${host}:8088`, description: 'GitLab' },
+                    { port: '8444', url: `https://${host}:8444`, description: 'GitLab HTTPS' }
+                ],
+                'xxe-lab': [{ port: '8090', url: `${protocol}//${host}:8090`, description: 'XXE Lab' }],
+                'ssrf-lab': [{ port: '8091', url: `${protocol}//${host}:8091`, description: 'SSRF Lab' }],
+                'deserialization-lab': [
+                    { port: '8092', url: `${protocol}//${host}:8092`, description: 'Java Deser' },
+                    { port: '5000', url: `${protocol}//${host}:5000`, description: 'Python Deser' },
+                    { port: '8095', url: `${protocol}//${host}:8095`, description: 'PHP Deser' }
+                ]
+            };
+            
+            return urlMappings[appName] || [];
+        }
+
+        // Load application configuration
+        async function loadConfig() {
+            try {
+                const response = await fetch(`${API_BASE}/config`);
+                if (response.ok) {
+                    const config = await response.json();
+                    appConfig = config;
+                }
+            } catch (error) {
+                console.error('Failed to load configuration:', error);
+            }
+        }
 
         // Initialize the application
-        function initializeApp() {
+        async function initializeApp() {
+            // Load configuration first
+            await loadConfig();
+            
             setupEventListeners();
             loadEnvironments();
             
@@ -684,8 +769,8 @@
                 connectWebSocket();
             }, 100);
             
-            // Refresh environments every 30 seconds
-            setInterval(loadEnvironments, 30000);
+            // Refresh environments every 10 seconds
+            setInterval(loadEnvironments, 10000);
         }
 
         // Initialize app immediately (no auth check)
@@ -925,8 +1010,16 @@
             const card = document.createElement('div');
             card.className = 'environment-card';
             
+            // Generate clickable URLs based on the application
+            const urls = generateApplicationUrls(env);
             const portsHtml = env.ports.length > 0 ? 
-                env.ports.map(p => `<span class="port-tag">${p.host}:${p.container}</span>`).join('') :
+                env.ports.map(p => {
+                    const url = urls.find(u => u.port === p.host);
+                    if (url) {
+                        return `<a href="${url.url}" target="_blank" class="port-tag port-link" title="Open ${url.description}">${p.host}:${p.container} 🔗</a>`;
+                    }
+                    return `<span class="port-tag">${p.host}:${p.container}</span>`;
+                }).join('') :
                 '<span style="color: #999;">None exposed</span>';
             
             card.innerHTML = `

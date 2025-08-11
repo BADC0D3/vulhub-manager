@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  express-mongodb:
+    image: mongo:5.0
+    container_name: express-mongodb
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=admin
+
+  express-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: express-vulnerable
+    ports:
+      - "3003:3000"
+    depends_on:
+      - express-mongodb
+    environment:
+      - MONGODB_URI=mongodb://admin:admin@express-mongodb:27017/vulnerable?authSource=admin
+      - JWT_SECRET=insecure-secret
+      - NODE_ENV=development
+    restart: unless-stopped

@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  laravel-db:
+    image: mysql:8.0
+    container_name: laravel-db
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=laravel
+      - MYSQL_USER=laravel
+      - MYSQL_PASSWORD=laravel
+
+  laravel-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: laravel-vulnerable
+    ports:
+      - "8094:80"
+    depends_on:
+      - laravel-db
+    environment:
+      - DB_CONNECTION=mysql
+      - DB_HOST=laravel-db
+      - DB_PORT=3306
+      - DB_DATABASE=laravel
+      - DB_USERNAME=laravel
+      - DB_PASSWORD=laravel
+      - APP_DEBUG=true
+    restart: unless-stopped

@@ -1,0 +1,9 @@
+version: '3.8'
+
+services:
+  struts2:
+    image: vulhub/struts2:2.5.12
+    container_name: struts2
+    ports:
+      - "8086:8080"
+    restart: unless-stopped

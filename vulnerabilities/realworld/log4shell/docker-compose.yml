@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  log4shell:
+    image: christophetd/log4shell-vulnerable-app:latest
+    container_name: log4shell
+    ports:
+      - "8089:8080"
+    environment:
+      - JAVA_OPTS=-Dlog4j2.formatMsgNoLookups=false
+    restart: unless-stopped
