@@ -1547,18 +1547,31 @@
             let hintIndex = 0;
             
             // Extract custom hint blocks: :::hint Title\nContent\n:::
-            markdown = markdown.replace(/:::hint\s+(.*?)\n([\s\S]*?)\n:::/g, function(match, title, content) {
+            // Use a more precise regex that ensures we match complete hint blocks
+            markdown = markdown.replace(/:::hint\s+([^\n]+)\n([\s\S]*?)\n:::/g, function(match, title, content) {
                 const placeholder = `HINT_BLOCK_${hintIndex}`;
                 hintBlocks.push({ 
                     title: title.trim(), 
-                    content: content.trim() 
+                    content: content.trim(),
+                    originalMatch: match // Store original for debugging
                 });
                 hintIndex++;
-                return placeholder;
+                return '\n' + placeholder + '\n'; // Preserve newlines around placeholder
             });
             
             // Convert markdown to HTML using Showdown
             let html = showdownConverter.makeHtml(markdown);
+            
+            // Debug: Check for duplicate placeholders
+            const placeholderCounts = {};
+            for (let i = 0; i < hintIndex; i++) {
+                const placeholder = `HINT_BLOCK_${i}`;
+                const count = (html.match(new RegExp(placeholder, 'g')) || []).length;
+                if (count > 1) {
+                    console.warn(`Warning: Placeholder ${placeholder} appears ${count} times in HTML`);
+                }
+                placeholderCounts[placeholder] = count;
+            }
             
             // Add class to tables
             html = html.replace(/<table>/g, '<table class="tutorial-table">');
@@ -1577,9 +1590,16 @@
                         </div>
                     </div>`;
                 
-                // Replace placeholder
-                html = html.replace(new RegExp(`<p>HINT_BLOCK_${index}</p>`, 'g'), hintHtml);
-                html = html.replace(new RegExp(`HINT_BLOCK_${index}`, 'g'), hintHtml);
+                // Replace placeholder - use a more robust approach
+                const placeholder = `HINT_BLOCK_${index}`;
+                const placeholderRegex = new RegExp(`(<p>)?\\s*${placeholder}\\s*(</p>)?`, 'i');
+                
+                // Replace only the first occurrence
+                if (placeholderRegex.test(html)) {
+                    html = html.replace(placeholderRegex, hintHtml);
+                } else {
+                    console.warn(`Placeholder ${placeholder} not found in HTML`);
+                }
             });
             
             return html;
