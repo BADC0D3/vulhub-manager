@@ -1,0 +1,1299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vulhub Manager</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        /* Main App Styles */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+            position: relative;
+        }
+        
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .stats-bar {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .stat-card {
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            color: white;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            display: block;
+        }
+        
+        .search-container {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        
+        .search-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .search-box:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .filter-dropdown {
+            padding: 12px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            background: white;
+            cursor: pointer;
+            transition: border-color 0.3s;
+            min-width: 150px;
+        }
+        
+        .filter-dropdown:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .filter-dropdown option {
+            padding: 8px;
+        }
+        
+        .filter-dropdown option[disabled] {
+            font-style: italic;
+            color: #999;
+            background: #f8f8f8;
+        }
+        
+        .filter-dropdown option[data-category="true"] {
+            padding-left: 20px;
+        }
+        
+        .refresh-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+            white-space: nowrap;
+        }
+        
+        .refresh-btn:hover {
+            background: #218838;
+        }
+        
+        .environments-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 20px;
+        }
+        
+        .environment-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .environment-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+        
+        .environment-name {
+            font-size: 1.4em;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        .environment-category {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .status-running {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-stopped {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .environment-details {
+            margin-bottom: 20px;
+        }
+        
+        .detail-row {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+        }
+        
+        .detail-label {
+            font-weight: 600;
+            color: #666;
+            width: 100px;
+            flex-shrink: 0;
+        }
+        
+        .detail-value {
+            color: #333;
+            flex: 1;
+        }
+        
+        .ports-list, .services-list {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .port-tag, .service-tag {
+            background: #e9ecef;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            color: #495057;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 10px;
+            border-top: 1px solid #e0e0e0;
+            padding-top: 15px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-start {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-start:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+        
+        .btn-stop {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-stop:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+        
+        .btn-logs {
+            background: #17a2b8;
+            color: white;
+        }
+        
+        .btn-logs:hover {
+            background: #138496;
+        }
+        
+        .btn-details {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-details:hover {
+            background: #5a6268;
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .loading-spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .no-environments {
+            text-align: center;
+            padding: 60px;
+            color: white;
+            font-size: 1.2em;
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 50px auto;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 1000px;
+            max-height: 80vh;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h3 {
+            font-size: 1.5em;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 28px;
+            cursor: pointer;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+        
+        .modal-close:hover {
+            opacity: 1;
+        }
+        
+        .modal-body {
+            padding: 30px;
+            overflow-y: auto;
+            flex: 1;
+        }
+        
+        .logs-container, .logs-content {
+            background: #1e1e1e;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            padding: 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+        .details-content {
+            line-height: 1.8;
+        }
+        
+        .details-content h3 {
+            color: #667eea;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .details-content pre {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+        }
+        
+        .details-content ul {
+            margin-left: 20px;
+        }
+        
+        .readme-content {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+        
+        .readme-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .readme-content img:hover {
+            transform: scale(1.05);
+        }
+        
+        /* Image modal for full-size view */
+        .image-modal {
+            display: none;
+            position: fixed;
+            z-index: 2001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.9);
+            cursor: pointer;
+        }
+        
+        .image-modal img {
+            display: block;
+            margin: auto;
+            max-width: 90%;
+            max-height: 90%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transform: translateX(400px);
+            transition: transform 0.3s ease-in-out;
+            z-index: 2000;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification.success {
+            background: #28a745;
+        }
+        
+        .notification.error {
+            background: #dc3545;
+        }
+        
+        .connection-status {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.9);
+            padding: 10px 20px;
+            border-radius: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+        }
+        
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #dc3545;
+        }
+        
+        .status-indicator.connected {
+            background: #28a745;
+        }
+        
+        .loading-message {
+            text-align: center;
+            color: white;
+            font-size: 1.2em;
+            padding: 40px;
+        }
+        
+        .log-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .log-controls button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            background: #667eea;
+            color: white;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .log-controls button:hover {
+            background: #5a67d8;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .environments-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-content {
+                width: 95%;
+                margin: 20px auto;
+            }
+            
+            .search-controls {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .search-box {
+                width: 100%;
+                min-width: unset;
+            }
+            
+            .filter-dropdown {
+                width: 100%;
+            }
+            
+            .refresh-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Main App -->
+    <div class="app-container" id="appContainer">
+        <div class="container">
+            <div class="header">
+                <h1>🐳 Vulhub Manager</h1>
+                <p>Manage your vulnerable Docker environments with ease</p>
+            </div>
+
+            <div class="stats-bar">
+                <div class="stat-card">
+                    <span class="stat-number" id="totalEnvs">-</span>
+                    <span>Total Environments</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number" id="runningEnvs">-</span>
+                    <span>Running</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number" id="stoppedEnvs">-</span>
+                    <span>Stopped</span>
+                </div>
+            </div>
+        
+            <div class="search-container">
+                <div class="search-controls">
+                    <input type="text" class="search-box" placeholder="Search environments by name, category, or vulnerability..." id="searchBox">
+                    <select class="filter-dropdown" id="filterDropdown">
+                        <option value="all">All Environments</option>
+                        <option value="running">Running</option>
+                        <option value="stopped">Stopped</option>
+                    </select>
+                    <button class="refresh-btn" onclick="loadEnvironments(true)">Refresh</button>
+                </div>
+            </div>
+            
+            <div class="environments-grid" id="environmentsGrid">
+                <div class="loading-message">Loading environments...</div>
+            </div>
+        </div>
+        
+        <div class="connection-status" id="connectionStatus">
+            <span class="status-indicator" id="statusIndicator"></span>
+            <span id="connectionText">Disconnected</span>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div class="modal" id="logsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="logsModalTitle">Container Logs</h3>
+                <button class="modal-close" onclick="closeModal('logsModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="logs-container" id="logsContainer">
+                    Loading logs...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="detailsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="detailsModalTitle">Environment Details</h3>
+                <button class="modal-close" onclick="closeModal('detailsModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="details-content" id="detailsContent">
+                    Loading details...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const API_BASE = '/api';
+        const BASE_URL = `${window.location.protocol}//${window.location.host}`;
+        
+        // State
+        let environments = [];
+        let filteredEnvironments = [];
+        let currentFilter = 'all';
+        let currentSearch = '';
+        let availableCategories = new Set();
+        let ws = null;
+        let wsReconnectTimeout = null;
+        let wsPingInterval = null;
+        let logStreamController = null;
+
+        // Initialize the application
+        function initializeApp() {
+            setupEventListeners();
+            loadEnvironments();
+            
+            // Connect WebSocket after a short delay to ensure DOM is ready
+            setTimeout(() => {
+                connectWebSocket();
+            }, 100);
+            
+            // Refresh environments every 30 seconds
+            setInterval(loadEnvironments, 30000);
+        }
+
+        // Initialize app immediately (no auth check)
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Initializing Vulhub Manager...');
+            initializeApp();
+        });
+
+        // API Helper (no auth)
+        async function apiRequest(url, options = {}) {
+            const response = await fetch(`${BASE_URL}${url}`, {
+                ...options,
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...options.headers
+                }
+            });
+            
+            return response;
+        }
+
+        // WebSocket connection for real-time updates
+        
+        function connectWebSocket() {
+            const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsUrl = `${wsProtocol}//${window.location.host}`;
+            
+            ws = new WebSocket(wsUrl);
+            
+            ws.onopen = () => {
+                console.log('Connected to WebSocket');
+                updateConnectionStatus(true);
+                
+                // Clear any existing reconnect timeout
+                if (wsReconnectTimeout) {
+                    clearTimeout(wsReconnectTimeout);
+                    wsReconnectTimeout = null;
+                }
+                
+                // Start ping interval to keep connection alive
+                if (wsPingInterval) {
+                    clearInterval(wsPingInterval);
+                }
+                wsPingInterval = setInterval(() => {
+                    if (ws.readyState === WebSocket.OPEN) {
+                        ws.send(JSON.stringify({ type: 'ping' }));
+                    }
+                }, 25000); // Ping every 25 seconds
+            };
+            
+            ws.onmessage = (event) => {
+                try {
+                    const data = JSON.parse(event.data);
+                    if (data.type !== 'pong') {
+                        handleWebSocketMessage(data);
+                    }
+                } catch (error) {
+                    console.error('Error parsing WebSocket message:', error);
+                }
+            };
+            
+            ws.onclose = () => {
+                console.log('WebSocket disconnected');
+                updateConnectionStatus(false);
+                
+                // Clear ping interval
+                if (wsPingInterval) {
+                    clearInterval(wsPingInterval);
+                    wsPingInterval = null;
+                }
+                
+                // Attempt to reconnect after 5 seconds
+                if (!wsReconnectTimeout) {
+                    wsReconnectTimeout = setTimeout(() => {
+                        wsReconnectTimeout = null;
+                        connectWebSocket();
+                    }, 5000);
+                }
+            };
+            
+            ws.onerror = (error) => {
+                console.error('WebSocket error:', error);
+                updateConnectionStatus(false);
+            };
+        }
+
+        function updateConnectionStatus(connected) {
+            const indicator = document.getElementById('statusIndicator');
+            const text = document.getElementById('connectionText');
+            
+            if (indicator && text) {
+                if (connected) {
+                    indicator.classList.add('connected');
+                    text.textContent = 'Connected';
+                } else {
+                    indicator.classList.remove('connected');
+                    text.textContent = 'Disconnected';
+                }
+            }
+        }
+
+        function handleWebSocketMessage(data) {
+            if (data.type === 'status_change') {
+                const env = environments.find(e => e.id === data.environmentId);
+                if (env) {
+                    env.status = data.status;
+                    updateStats();
+                    renderEnvironments();
+                }
+            }
+        }
+
+        // Load environments
+        async function loadEnvironments(forceRefresh = false) {
+            try {
+                const url = forceRefresh ? 
+                    `${API_BASE}/environments?refresh=true` : 
+                    `${API_BASE}/environments`;
+                    
+                const response = await apiRequest(url);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    environments = data;
+                    
+                    // Extract unique categories
+                    availableCategories.clear();
+                    data.forEach(env => availableCategories.add(env.category));
+                    
+                    updateFilters();
+                    applyFilters();
+                    updateStats();
+                } else {
+                    throw new Error(data.error || 'Failed to load environments');
+                }
+            } catch (error) {
+                console.error('Error loading environments:', error);
+                showNotification('Failed to load environments: ' + error.message, 'error');
+                document.getElementById('environmentsGrid').innerHTML = `
+                    <div class="no-environments">
+                        ❌ Failed to load environments<br>
+                        <small>${error.message}</small>
+                    </div>
+                `;
+            }
+        }
+
+        function updateFilters() {
+            const filterDropdown = document.getElementById('filterDropdown');
+            const currentValue = filterDropdown.value; // Remember current selection
+            
+            // Remove existing category options
+            const existingOptions = filterDropdown.querySelectorAll('option[data-category="true"]');
+            existingOptions.forEach(option => option.remove());
+            
+            // Remove any existing separators
+            const separators = filterDropdown.querySelectorAll('option[disabled]');
+            separators.forEach(sep => sep.remove());
+            
+            // Add separator if categories exist
+            if (availableCategories.size > 0) {
+                const separator = document.createElement('option');
+                separator.disabled = true;
+                separator.textContent = '─── Categories ───';
+                filterDropdown.appendChild(separator);
+            }
+            
+            // Add category filter options
+            availableCategories.forEach(category => {
+                const option = document.createElement('option');
+                option.value = category;
+                option.textContent = category.charAt(0).toUpperCase() + category.slice(1);
+                option.setAttribute('data-category', 'true');
+                filterDropdown.appendChild(option);
+            });
+            
+            // Restore the previous selection if it still exists
+            if (Array.from(filterDropdown.options).some(opt => opt.value === currentValue)) {
+                filterDropdown.value = currentValue;
+            } else {
+                filterDropdown.value = 'all';
+                currentFilter = 'all';
+            }
+        }
+
+        function updateStats() {
+            const total = environments.length;
+            const running = environments.filter(env => env.status === 'running').length;
+            const stopped = total - running;
+            
+            document.getElementById('totalEnvs').textContent = total;
+            document.getElementById('runningEnvs').textContent = running;
+            document.getElementById('stoppedEnvs').textContent = stopped;
+        }
+
+        function applyFilters() {
+            filteredEnvironments = environments.filter(env => {
+                const matchesSearch = currentSearch === '' || 
+                    env.name.toLowerCase().includes(currentSearch) ||
+                    env.category.toLowerCase().includes(currentSearch) ||
+                    env.vulnerability.toLowerCase().includes(currentSearch);
+                
+                const matchesFilter = currentFilter === 'all' ||
+                    env.category === currentFilter ||
+                    env.status === currentFilter;
+                
+                return matchesSearch && matchesFilter;
+            });
+            
+            renderEnvironments();
+        }
+
+        function renderEnvironments() {
+            const grid = document.getElementById('environmentsGrid');
+            
+            if (filteredEnvironments.length === 0) {
+                grid.innerHTML = `
+                    <div class="no-environments">
+                        ${environments.length === 0 ? 
+                            '📁 No environments found in /vulhub directory' : 
+                            '🔍 No environments match your search criteria'
+                        }
+                    </div>
+                `;
+                return;
+            }
+            
+            grid.innerHTML = '';
+            
+            filteredEnvironments.forEach(env => {
+                const card = createEnvironmentCard(env);
+                grid.appendChild(card);
+            });
+        }
+
+        function createEnvironmentCard(env) {
+            const card = document.createElement('div');
+            card.className = 'environment-card';
+            
+            const portsHtml = env.ports.length > 0 ? 
+                env.ports.map(p => `<span class="port-tag">${p.host}:${p.container}</span>`).join('') :
+                '<span style="color: #999;">None exposed</span>';
+            
+            card.innerHTML = `
+                <div class="card-header">
+                    <div>
+                        <div class="environment-name">${env.name}</div>
+                        <div class="environment-category">${env.category}</div>
+                    </div>
+                    <span class="status-badge status-${env.status}">
+                        ${env.status}
+                    </span>
+                </div>
+                
+                <div class="environment-details">
+                    <div class="detail-row">
+                        <span class="detail-label">Vulnerability:</span>
+                        <span class="detail-value">${env.vulnerability}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Path:</span>
+                        <span class="detail-value">${env.path}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Ports:</span>
+                        <div class="ports-list">${portsHtml}</div>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Services:</span>
+                        <div class="services-list">
+                            ${env.services.map(service => `<span class="service-tag">${service}</span>`).join('')}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="actions">
+                    <button class="btn ${env.status === 'running' ? 'btn-stop' : 'btn-start'}" 
+                            onclick="toggleEnvironment('${env.id}', this)">
+                        <span class="btn-text">${env.status === 'running' ? 'Stop' : 'Start'}</span>
+                    </button>
+                    <button class="btn btn-logs" onclick="showLogs('${env.id}', '${env.name}')">
+                        Logs
+                    </button>
+                    <button class="btn btn-details" onclick="showDetails('${env.id}', '${env.name}')">
+                        Details
+                    </button>
+                </div>
+            `;
+            return card;
+        }
+
+        async function toggleEnvironment(id, buttonElement) {
+            const env = environments.find(e => e.id === id);
+            const buttonText = buttonElement.querySelector('.btn-text');
+            const originalText = buttonText.textContent;
+            
+            // Show loading state
+            buttonElement.disabled = true;
+            buttonText.innerHTML = '<span class="loading-spinner"></span> Processing...';
+            
+            try {
+                const action = env.status === 'running' ? 'stop' : 'start';
+                const response = await apiRequest(`${API_BASE}/environments/${id}/${action}`, {
+                    method: 'POST'
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    env.status = action === 'start' ? 'running' : 'stopped';
+                    showNotification(result.message, 'success');
+                    
+                    // Update button appearance
+                    buttonElement.className = `btn ${env.status === 'running' ? 'btn-stop' : 'btn-start'}`;
+                    buttonText.textContent = env.status === 'running' ? 'Stop' : 'Start';
+                    
+                    // Update status badge
+                    const card = buttonElement.closest('.environment-card');
+                    const statusBadge = card.querySelector('.status-badge');
+                    statusBadge.className = `status-badge status-${env.status}`;
+                    statusBadge.textContent = env.status;
+                    
+                    updateStats();
+                } else {
+                    throw new Error(result.error || 'Operation failed');
+                }
+            } catch (error) {
+                console.error(`Error toggling environment ${id}:`, error);
+                showNotification(`Failed to ${env.status === 'running' ? 'stop' : 'start'} environment: ${error.message}`, 'error');
+                buttonText.textContent = originalText;
+            } finally {
+                buttonElement.disabled = false;
+            }
+        }
+
+        async function showLogs(id, name) {
+            const modal = document.getElementById('logsModal');
+            const title = document.getElementById('logsModalTitle');
+            const logsContainer = document.getElementById('logsContainer');
+            
+            title.textContent = `Logs - ${name}`;
+            logsContainer.textContent = 'Loading logs...';
+            modal.style.display = 'block';
+            
+            try {
+                const response = await apiRequest(`${API_BASE}/environments/${id}/logs?tail=200`);
+                const result = await response.json();
+                
+                if (response.ok) {
+                    logsContainer.textContent = result.logs || 'No logs available';
+                    
+                    // Start streaming logs if environment is running
+                    const env = environments.find(e => e.id === id);
+                    if (env && env.status === 'running') {
+                        startLogStream(id, logsContainer);
+                    }
+                } else {
+                    logsContainer.textContent = `Error loading logs: ${result.error}`;
+                }
+            } catch (error) {
+                console.error(`Error loading logs for ${id}:`, error);
+                logsContainer.textContent = `Error loading logs: ${error.message}`;
+            }
+        }
+
+        function startLogStream(id, container) {
+            // Stop any existing stream
+            if (logStreamController) {
+                logStreamController.abort();
+            }
+            
+            logStreamController = new AbortController();
+            const eventSource = new EventSource(
+                `${BASE_URL}${API_BASE}/environments/${id}/logs/stream`,
+                {
+                    signal: logStreamController.signal
+                }
+            );
+            
+            eventSource.onmessage = (event) => {
+                try {
+                    const data = JSON.parse(event.data);
+                    if (data.type === 'log' || data.type === 'error') {
+                        container.textContent += '\n' + data.content;
+                        // Auto-scroll to bottom
+                        container.scrollTop = container.scrollHeight;
+                    }
+                } catch (error) {
+                    console.error('Error parsing log stream:', error);
+                }
+            };
+            
+            eventSource.onerror = (error) => {
+                console.error('Log stream error:', error);
+                eventSource.close();
+            };
+        }
+
+        async function showDetails(id, name) {
+            const modal = document.getElementById('detailsModal');
+            const title = document.getElementById('detailsModalTitle');
+            const detailsContent = document.getElementById('detailsContent');
+            
+            title.textContent = `Details - ${name}`;
+            detailsContent.innerHTML = 'Loading details...';
+            modal.style.display = 'block';
+            
+            try {
+                const response = await apiRequest(`${API_BASE}/environments/${id}/details`);
+                const details = await response.json();
+                
+                if (response.ok) {
+                    let html = `
+                        <h3>Environment Information</h3>
+                        <p><strong>Category:</strong> ${details.category}</p>
+                        <p><strong>Vulnerability:</strong> ${details.vulnerability}</p>
+                        <p><strong>Path:</strong> <code>${details.path}</code></p>
+                        <p><strong>Compose Version:</strong> ${details.composeVersion}</p>
+                        <p><strong>Services:</strong> ${details.services.join(', ')}</p>
+                    `;
+                    
+                    if (details.ports && details.ports.length > 0) {
+                        html += '<p><strong>Port Mappings:</strong></p><ul>';
+                        details.ports.forEach(port => {
+                            html += `<li>Host: ${port.host} → Container: ${port.container}</li>`;
+                        });
+                        html += '</ul>';
+                    }
+                    
+                    if (details.containerStatus) {
+                        html += `
+                            <h3>Container Status</h3>
+                            <pre>${escapeHtml(details.containerStatus)}</pre>
+                        `;
+                    }
+                    
+                    if (details.readme) {
+                        html += `
+                            <h3>README</h3>
+                            <div class="readme-content">${markdownToHtml(details.readme, id)}</div>
+                        `;
+                    }
+                    
+                    detailsContent.innerHTML = html;
+                    
+                    // Load images with authentication
+                    await loadImagesWithAuth(detailsContent);
+                    
+                    // Add click handlers to images for full-size view
+                    detailsContent.querySelectorAll('.readme-content img').forEach(img => {
+                        img.addEventListener('click', () => {
+                            showImageModal(img.src);
+                        });
+                        img.title = 'Click to view full size';
+                    });
+                    
+                } else {
+                    detailsContent.innerHTML = `<p>Error loading details: ${details.error}</p>`;
+                }
+            } catch (error) {
+                console.error(`Error loading details for ${id}:`, error);
+                detailsContent.innerHTML = `<p>Error loading details: ${error.message}</p>`;
+            }
+        }
+
+        function showImageModal(src) {
+            const modal = document.createElement('div');
+            modal.className = 'image-modal';
+            modal.innerHTML = `<img src="${src}" alt="Full size image">`;
+            modal.onclick = () => {
+                document.body.removeChild(modal);
+            };
+            document.body.appendChild(modal);
+            modal.style.display = 'block';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+            
+            // Stop log streaming if closing logs modal
+            if (modalId === 'logsModal' && logStreamController) {
+                logStreamController.abort();
+                logStreamController = null;
+            }
+        }
+
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            // Trigger animation
+            setTimeout(() => notification.classList.add('show'), 100);
+            
+            // Remove notification after 5 seconds
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        document.body.removeChild(notification);
+                    }
+                }, 300);
+            }, 5000);
+        }
+
+        // Utility functions
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        async function loadAuthenticatedImage(src) {
+            try {
+                const response = await fetch(src);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const blob = await response.blob();
+                return URL.createObjectURL(blob);
+            } catch (error) {
+                console.error('Failed to load image:', src, error);
+                // Return a placeholder image on error
+                return 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'200\' height=\'100\'%3E%3Crect width=\'200\' height=\'100\' fill=\'%23f0f0f0\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' dy=\'.3em\' fill=\'%23999\'%3EImage not found%3C/text%3E%3C/svg%3E';
+            }
+        }
+
+        function markdownToHtml(markdown, envId = null) {
+            // Enhanced markdown parsing with image URL fixing
+            let html = markdown
+                .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+                .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+                .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+                .replace(/^\* (.*$)/gim, '<li>$1</li>')
+                .replace(/```(.*?)```/gs, '<pre><code>$1</code></pre>')
+                .replace(/`(.*?)`/g, '<code>$1</code>')
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                .replace(/\n/g, '<br>');
+            
+            // Fix image URLs if environment ID is provided
+            if (envId) {
+                // Replace markdown images ![alt](src)
+                html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (match, alt, src) => {
+                    // Check if it's already an absolute URL
+                    if (src.startsWith('http://') || src.startsWith('https://') || src.startsWith('/')) {
+                        return `<img src="${src}" alt="${alt}" style="max-width: 100%;">`;
+                    }
+                    // Convert relative paths to API endpoint
+                    const imgUrl = `${BASE_URL}/api/environments/${envId}/static/${src}`;
+                    // Use a data attribute to mark images that need authentication
+                    return `<img data-auth-src="${imgUrl}" alt="${alt}" style="max-width: 100%;" 
+                            src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='100'%3E%3Crect width='200' height='100' fill='%23f0f0f0'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dy='.3em' fill='%23999'%3ELoading...%3C/text%3E%3C/svg%3E">`;
+                });
+                
+                // Also handle HTML img tags that might be in the markdown
+                html = html.replace(/<img([^>]*)\ssrc=["']([^"']+)["']([^>]*)>/gi, (match, before, src, after) => {
+                    // Check if it's already an absolute URL
+                    if (src.startsWith('http://') || src.startsWith('https://') || src.startsWith('/api/')) {
+                        return match;
+                    }
+                    // Convert relative paths to API endpoint
+                    const imgUrl = `${BASE_URL}/api/environments/${envId}/static/${src}`;
+                    return `<img${before} data-auth-src="${imgUrl}"${after} style="max-width: 100%;" 
+                            src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='100'%3E%3Crect width='200' height='100' fill='%23f0f0f0'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dy='.3em' fill='%23999'%3ELoading...%3C/text%3E%3C/svg%3E">`;
+                });
+            }
+            
+            return html;
+        }
+
+        async function loadImagesWithAuth(container) {
+            const images = container.querySelectorAll('img[data-auth-src]');
+            
+            for (const img of images) {
+                const authSrc = img.getAttribute('data-auth-src');
+                if (authSrc) {
+                    const blobUrl = await loadAuthenticatedImage(authSrc);
+                    img.src = blobUrl;
+                    img.removeAttribute('data-auth-src');
+                }
+            }
+        }
+
+        // Event listeners setup
+        function setupEventListeners() {
+            // Search box
+            document.getElementById('searchBox').addEventListener('input', (e) => {
+                currentSearch = e.target.value.toLowerCase();
+                applyFilters();
+            });
+            
+            // Filter dropdown
+            document.getElementById('filterDropdown').addEventListener('change', (e) => {
+                currentFilter = e.target.value;
+                applyFilters();
+            });
+            
+            // Close modals when clicking outside
+            window.addEventListener('click', (e) => {
+                if (e.target.classList.contains('modal')) {
+                    closeModal(e.target.id);
+                }
+            });
+        }
+    </script>
+</body>
+</html>

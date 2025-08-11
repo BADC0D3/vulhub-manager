@@ -1,0 +1,61 @@
+services:
+  vulhub-manager:
+    build: .
+    image: vulhub-manager:latest
+    ports:
+      - "3000:3000"
+    volumes:
+      # Mount the vulhub directory (adjust the path as needed)
+      - ../vulhub:/vulhub:ro
+      # Mount Docker socket to allow container management
+      # WARNING: This grants full Docker access - use with caution
+      - /var/run/docker.sock:/var/run/docker.sock
+      # Persistent logs volume
+      - vulhub-logs:/app/logs
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      # Security: Override these with secure values
+      - JWT_SECRET=${JWT_SECRET:-change-this-secret}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin}
+      # Vulhub configuration
+      - VULHUB_PATH=/vulhub
+      - CORS_ORIGIN=http://localhost:3000
+      # Docker configuration
+      - MAX_CONCURRENT_OPS=5
+      - MAX_RUNNING_ENVIRONMENTS=${MAX_RUNNING_ENVIRONMENTS:-1}
+      - STOP_ON_SHUTDOWN=false
+      # Logging
+      - LOG_LEVEL=debug
+    restart: unless-stopped
+    container_name: vulhub-manager
+    labels:
+      - "com.vulhub-manager.description=Vulhub Docker Environment Manager"
+    # Security options
+    security_opt:
+      - no-new-privileges:true
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+    # Network configuration
+    networks:
+      - vulhub-net
+    # Add user mapping to match the container user
+    user: "${UID:-1000}:${GID:-1000}"
+
+networks:
+  vulhub-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+volumes:
+  vulhub-logs:
+    driver: local
