@@ -184,6 +184,39 @@ This is by design for safety. To change:
    docker logs CONTAINER_NAME
    ```
 
+### Issue: Tutorial Hints Displaying Incorrectly
+
+**Symptoms:**
+- Hints showing in wrong sections
+- Duplicate hint numbers (multiple "Hint 2" entries)
+- Hints from one exercise appearing in another
+
+**Solution:**
+1. **Clear browser cache completely:**
+   - Press Ctrl+Shift+Delete (Cmd+Shift+Delete on Mac)
+   - Select "Cached images and files"
+   - Clear data for all time
+   
+2. **Clear localStorage:**
+   - Open browser DevTools (F12)
+   - Go to Console tab
+   - Run: `localStorage.clear()`
+   
+3. **Hard refresh the page:**
+   - Ctrl+F5 (Windows/Linux)
+   - Cmd+Shift+R (Mac)
+   
+4. **Restart the server if running locally:**
+   ```bash
+   # Stop the server (Ctrl+C)
+   npm start  # Start it again
+   ```
+
+**Why this happens:**
+- Browser caching can cause old JavaScript to persist
+- The hint rendering system in the frontend may cache hint blocks
+- This was a known issue that has been fixed in the latest version
+
 ## Getting Help
 
 If you're still having issues:

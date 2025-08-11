@@ -775,30 +775,40 @@
         }
         
         .learning-topic {
-            padding: 12px 15px;
-            margin-bottom: 8px;
+            padding: 14px 18px;
+            margin-bottom: 10px;
             background: var(--bg-card-solid);
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s ease;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            flex-direction: column;
+            gap: 6px;
+            border: 1px solid transparent;
         }
         
         .learning-topic:hover {
             background: var(--bg-card);
             transform: translateX(5px);
+            border-color: var(--accent-color);
+            box-shadow: 0 2px 8px rgba(0, 162, 255, 0.1);
+        }
+        
+        .topic-title {
+            font-weight: 500;
+            font-size: 1.05em;
+            color: var(--text-primary);
         }
         
         .topic-info {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 10px;
         }
         
         .difficulty {
-            font-size: 0.9em;
+            font-size: 1em;
+            letter-spacing: 2px;
         }
         
         .topic-time {
@@ -1072,46 +1082,46 @@
                             <h3><span>🌐</span> Web Application Security</h3>
                             <ul class="learning-topics">
                                 <li class="learning-topic" onclick="loadTutorial('sql-injection')">
+                                    <div class="topic-title">SQL Injection</div>
                                     <div class="topic-info">
-                                        <span>SQL Injection</span>
+                                        <span class="topic-time">2-3 hours</span>
                                         <span class="difficulty">⭐⭐⭐</span>
                                     </div>
-                                    <span class="topic-time">2-3 hours</span>
                                 </li>
                                 <li class="learning-topic" onclick="loadTutorial('xss')">
+                                    <div class="topic-title">Cross-Site Scripting (XSS)</div>
                                     <div class="topic-info">
-                                        <span>Cross-Site Scripting (XSS)</span>
+                                        <span class="topic-time">2-3 hours</span>
                                         <span class="difficulty">⭐⭐⭐</span>
                                     </div>
-                                    <span class="topic-time">2-3 hours</span>
                                 </li>
                                 <li class="learning-topic" onclick="loadTutorial('broken-authentication')">
+                                    <div class="topic-title">Broken Authentication</div>
                                     <div class="topic-info">
-                                        <span>Broken Authentication</span>
+                                        <span class="topic-time">2 hours</span>
                                         <span class="difficulty">⭐⭐</span>
                                     </div>
-                                    <span class="topic-time">2 hours</span>
                                 </li>
                                 <li class="learning-topic" onclick="loadTutorial('xxe')">
+                                    <div class="topic-title">XML External Entity (XXE)</div>
                                     <div class="topic-info">
-                                        <span>XML External Entity (XXE)</span>
+                                        <span class="topic-time">2-3 hours</span>
                                         <span class="difficulty">⭐⭐⭐⭐</span>
                                     </div>
-                                    <span class="topic-time">2-3 hours</span>
                                 </li>
                                 <li class="learning-topic" onclick="loadTutorial('ssrf')">
+                                    <div class="topic-title">Server-Side Request Forgery</div>
                                     <div class="topic-info">
-                                        <span>Server-Side Request Forgery</span>
+                                        <span class="topic-time">2-3 hours</span>
                                         <span class="difficulty">⭐⭐⭐⭐</span>
                                     </div>
-                                    <span class="topic-time">2-3 hours</span>
                                 </li>
                                 <li class="learning-topic" onclick="loadTutorial('deserialization')">
+                                    <div class="topic-title">Insecure Deserialization</div>
                                     <div class="topic-info">
-                                        <span>Insecure Deserialization</span>
+                                        <span class="topic-time">3 hours</span>
                                         <span class="difficulty">⭐⭐⭐⭐⭐</span>
                                     </div>
-                                    <span class="topic-time">3 hours</span>
                                 </li>
                             </ul>
                         </div>
@@ -1121,32 +1131,32 @@
                             <h3><span>🔌</span> API Security</h3>
                             <ul class="learning-topics">
                                 <li class="learning-topic" onclick="loadTutorial('bola')">
+                                    <div class="topic-title">BOLA/IDOR</div>
                                     <div class="topic-info">
-                                        <span>BOLA/IDOR</span>
+                                        <span class="topic-time">2 hours</span>
                                         <span class="difficulty">⭐⭐</span>
                                     </div>
-                                    <span class="topic-time">2 hours</span>
                                 </li>
                                 <li class="learning-topic" onclick="loadTutorial('jwt')">
+                                    <div class="topic-title">JWT Vulnerabilities</div>
                                     <div class="topic-info">
-                                        <span>JWT Vulnerabilities</span>
+                                        <span class="topic-time">2-3 hours</span>
                                         <span class="difficulty">⭐⭐⭐⭐</span>
                                     </div>
-                                    <span class="topic-time">2-3 hours</span>
                                 </li>
                                 <li class="learning-topic" onclick="loadTutorial('graphql')">
+                                    <div class="topic-title">GraphQL Security</div>
                                     <div class="topic-info">
-                                        <span>GraphQL Security</span>
+                                        <span class="topic-time">2-3 hours</span>
                                         <span class="difficulty">⭐⭐⭐⭐</span>
                                     </div>
-                                    <span class="topic-time">2-3 hours</span>
                                 </li>
                                 <li class="learning-topic" onclick="loadTutorial('rate-limiting')">
+                                    <div class="topic-title">Rate Limiting & DoS</div>
                                     <div class="topic-info">
-                                        <span>Rate Limiting & DoS</span>
+                                        <span class="topic-time">1-2 hours</span>
                                         <span class="difficulty">⭐⭐⭐</span>
                                     </div>
-                                    <span class="topic-time">1-2 hours</span>
                                 </li>
                             </ul>
                         </div>
@@ -1156,18 +1166,18 @@
                             <h3><span>🐳</span> Container & Infrastructure</h3>
                             <ul class="learning-topics">
                                 <li class="learning-topic" onclick="loadTutorial('docker-escape')">
+                                    <div class="topic-title">Docker Container Escape</div>
                                     <div class="topic-info">
-                                        <span>Docker Container Escape</span>
+                                        <span class="topic-time">3-4 hours</span>
                                         <span class="difficulty">⭐⭐⭐⭐⭐</span>
                                     </div>
-                                    <span class="topic-time">3-4 hours</span>
                                 </li>
                                 <li class="learning-topic" onclick="loadTutorial('kubernetes')">
+                                    <div class="topic-title">Kubernetes Security</div>
                                     <div class="topic-info">
-                                        <span>Kubernetes Security</span>
+                                        <span class="topic-time">4-5 hours</span>
                                         <span class="difficulty">⭐⭐⭐⭐⭐</span>
                                     </div>
-                                    <span class="topic-time">4-5 hours</span>
                                 </li>
                             </ul>
                         </div>
@@ -1177,18 +1187,18 @@
                             <h3><span>🏢</span> Real-World CVEs</h3>
                             <ul class="learning-topics">
                                 <li class="learning-topic" onclick="loadTutorial('log4shell')">
+                                    <div class="topic-title">Log4Shell (CVE-2021-44228)</div>
                                     <div class="topic-info">
-                                        <span>Log4Shell (CVE-2021-44228)</span>
+                                        <span class="topic-time">2 hours</span>
                                         <span class="difficulty">⭐⭐⭐⭐</span>
                                     </div>
-                                    <span class="topic-time">2 hours</span>
                                 </li>
                                 <li class="learning-topic" onclick="loadTutorial('spring4shell')">
+                                    <div class="topic-title">Spring4Shell (CVE-2022-22965)</div>
                                     <div class="topic-info">
-                                        <span>Spring4Shell (CVE-2022-22965)</span>
+                                        <span class="topic-time">2-3 hours</span>
                                         <span class="difficulty">⭐⭐⭐⭐⭐</span>
                                     </div>
-                                    <span class="topic-time">2-3 hours</span>
                                 </li>
                             </ul>
                         </div>
