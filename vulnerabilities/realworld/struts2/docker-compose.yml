@@ -2,8 +2,9 @@ version: '3.8'
 
 services:
   struts2:
-    image: vulhub/struts2:2.5.12
-    container_name: struts2
+    # Using Medicean's VulApps Struts2 S2-057
+    image: medicean/vulapps:s_struts2_s2-057
+    container_name: struts2-app
     ports:
       - "8086:8080"
     restart: unless-stopped

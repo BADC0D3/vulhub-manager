@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   log4shell:
-    image: christophetd/log4shell-vulnerable-app:latest
+    image: ghcr.io/christophetd/log4shell-vulnerable-app:latest
     container_name: log4shell
     ports:
       - "8089:8080"

@@ -2,10 +2,19 @@ version: '3.8'
 
 services:
   spring4shell:
-    image: vulfocus/spring-cloud-function-spel-rce:latest
-    container_name: spring4shell
+    # Option 1: Use a pre-built vulnerable Spring Boot app
+    image: vulfocus/spring-core-rce-2022-03-29:latest
+    container_name: spring4shell-app
     ports:
       - "8085:8080"
-    environment:
-      - SPRING_PROFILES_ACTIVE=vulnerable
     restart: unless-stopped
+    
+  # Alternative: Build from source (uncomment if needed)
+  # spring4shell-build:
+  #   build:
+  #     context: https://github.com/tangxiaofeng7/Spring-Cloud-Function-Spel.git
+  #     dockerfile: Dockerfile
+  #   container_name: spring4shell-app
+  #   ports:
+  #     - "8085:8080"
+  #   restart: unless-stopped
