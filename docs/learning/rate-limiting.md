@@ -108,9 +108,7 @@ Rate limiting failures have led to:
 **Setup**: API with unknown rate limiting  
 **Goal**: Identify rate limit threshold and reset window
 
-<details>
-<summary>💡 Hint 1: Systematic testing</summary>
-
+:::hint 💡 Hint 1: Systematic testing
 Start with a baseline:
 1. Send requests slowly (1/second)
 2. Gradually increase rate
@@ -118,11 +116,9 @@ Start with a baseline:
 
 Look for response codes like 429 or specific error messages.
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 2: Response headers</summary>
-
+:::hint 💡 Hint 2: Response headers
 Check for rate limit headers:
 - `X-RateLimit-Limit`
 - `X-RateLimit-Remaining`
@@ -131,11 +127,9 @@ Check for rate limit headers:
 
 These reveal the implementation!
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 3: Reset window testing</summary>
-
+:::hint 💡 Hint 3: Reset window testing
 Once rate limited:
 1. Note the exact time
 2. Try requests at intervals
@@ -143,11 +137,9 @@ Once rate limited:
 
 Is it fixed window or sliding?
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 4
 **Detection Script**:
 ```python
 import time
@@ -221,7 +213,7 @@ def advanced_detection(base_url):
 - **Reset at minute boundary**: Fixed window
 - **Reset after 60s from first request**: Sliding window
 
-</details>
+:::
 
 ---
 
@@ -230,9 +222,7 @@ def advanced_detection(base_url):
 **Setup**: Rate limiting based on IP address  
 **Goal**: Bypass using header manipulation
 
-<details>
-<summary>💡 Hint 1: Common headers</summary>
-
+:::hint 💡 Hint 1: Common headers
 Try adding these headers:
 - `X-Forwarded-For: 1.2.3.4`
 - `X-Real-IP: 1.2.3.4`
@@ -241,11 +231,9 @@ Try adding these headers:
 
 Which ones affect the rate limiting?
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 2: Header chaining</summary>
-
+:::hint 💡 Hint 2: Header chaining
 Some implementations check the first IP in a chain:
 ```
 X-Forwarded-For: 1.2.3.4, 5.6.7.8, 9.10.11.12
@@ -253,22 +241,18 @@ X-Forwarded-For: 1.2.3.4, 5.6.7.8, 9.10.11.12
 
 Try different positions and formats!
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 3: IPv6 and spoofing</summary>
-
+:::hint 💡 Hint 3: IPv6 and spoofing
 If IPv6 is supported:
 - Each /64 subnet = billions of IPs
 - Try `X-Forwarded-For: 2001:db8::1`
 
 Also try localhost bypasses: `127.0.0.1`, `::1`
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 4
 **Method 1: Header rotation**
 ```python
 import requests
@@ -366,7 +350,7 @@ def race_condition_bypass(url, num_threads=10):
     print(f"Successful requests: {success_count}/{num_threads}")
 ```
 
-</details>
+:::
 
 ---
 
@@ -375,9 +359,7 @@ def race_condition_bypass(url, num_threads=10):
 **Setup**: E-commerce application with cart functionality  
 **Goal**: Create DoS through resource exhaustion
 
-<details>
-<summary>💡 Hint 1: Identify expensive operations</summary>
-
+:::hint 💡 Hint 1: Identify expensive operations
 Look for operations that:
 - Create database records
 - Reserve inventory
@@ -387,11 +369,9 @@ Look for operations that:
 
 These consume more resources!
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 2: Cart manipulation</summary>
-
+:::hint 💡 Hint 2: Cart manipulation
 Try:
 1. Add many items to cart
 2. Create multiple carts
@@ -399,21 +379,17 @@ Try:
 
 Does this lock inventory or create sessions?
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 3: Asymmetric operations</summary>
-
+:::hint 💡 Hint 3: Asymmetric operations
 Find operations where:
 - Small request → Large response
 - Simple input → Complex processing
 - One request → Multiple backend calls
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 4
 **Method 1: Cart explosion**
 ```python
 def cart_dos_attack(base_url, session):
@@ -503,7 +479,7 @@ def session_exhaustion(base_url):
         futures = [executor.submit(create_session) for _ in range(1000)]
 ```
 
-</details>
+:::
 
 ---
 
@@ -512,9 +488,7 @@ def session_exhaustion(base_url):
 **Setup**: API with distributed rate limiting  
 **Goal**: Exploit coordination weaknesses
 
-<details>
-<summary>💡 Hint 1: Identify the architecture</summary>
-
+:::hint 💡 Hint 1: Identify the architecture
 Test if rate limiting is:
 - Per-server (load balancer rotation)
 - Eventually consistent (sync delays)
@@ -522,11 +496,9 @@ Test if rate limiting is:
 
 Send rapid requests and check for inconsistencies.
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 2: Timing attacks</summary>
-
+:::hint 💡 Hint 2: Timing attacks
 If there's a sync delay:
 1. Hit limit on server A
 2. Quickly switch to server B
@@ -534,11 +506,9 @@ If there's a sync delay:
 
 Try different timings!
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 3: Cache poisoning</summary>
-
+:::hint 💡 Hint 3: Cache poisoning
 Some implementations cache rate limit data. Try:
 - Malformed user IDs
 - Unicode characters
@@ -547,11 +517,9 @@ Some implementations cache rate limit data. Try:
 
 Can you poison the cache?
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 4
 **Method 1: Load balancer rotation**
 ```python
 def distributed_bypass(base_url):
@@ -647,7 +615,7 @@ def cache_collision_attack(base_url):
                 print(f"Cache bypass with: {repr(identifier)}")
 ```
 
-</details>
+:::
 
 ---
 
@@ -655,20 +623,16 @@ def cache_collision_attack(base_url):
 
 **Goal**: Combine multiple techniques for maximum impact
 
-<details>
-<summary>🎯 Challenge Overview</summary>
-
+:::hint 🎯 Hint 1
 Advanced DoS scenarios:
 1. Amplification attacks
 2. Resource chain attacks
 3. Slowloris-style attacks
 4. Business logic chains
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint: Amplification</summary>
-
+:::hint 💡 Hint 2
 Find operations where:
 - 1 request triggers N operations
 - Small input generates large output
@@ -676,11 +640,9 @@ Find operations where:
 
 Chain these for amplification!
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 3
 **Amplification Attack Chain**:
 ```python
 # Step 1: Find amplification endpoints
@@ -779,7 +741,7 @@ def algorithmic_dos(base_url):
                  json={"graph": dense_graph, "start": "0", "end": "99"})
 ```
 
-</details>
+:::
 
 ---
 

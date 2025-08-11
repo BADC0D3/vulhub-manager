@@ -119,9 +119,7 @@ Storing sensitive information in the payload
 **Setup**: Login to Juice Shop and capture your JWT  
 **Goal**: Bypass authentication by removing signature verification
 
-<details>
-<summary>💡 Hint 1: Decode your JWT</summary>
-
+:::hint 💡 Hint 1: Decode your JWT
 Use jwt.io or command line:
 ```bash
 # Split the JWT
@@ -131,11 +129,9 @@ echo "YOUR_JWT" | cut -d. -f2 | base64 -d
 
 What's in the header? What's the algorithm?
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 2: Modify the algorithm</summary>
-
+:::hint 💡 Hint 2: Modify the algorithm
 Change the algorithm in the header:
 ```json
 {
@@ -146,11 +142,9 @@ Change the algorithm in the header:
 
 Remember to base64url encode it!
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 3: Remove the signature</summary>
-
+:::hint 💡 Hint 3: Remove the signature
 A JWT with "none" algorithm should have empty signature:
 ```
 header.payload.
@@ -158,11 +152,9 @@ header.payload.
 
 Note the trailing dot!
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 4
 **Step 1**: Decode your JWT
 ```python
 import base64
@@ -216,7 +208,7 @@ localStorage.setItem('token', 'YOUR_NONE_ALGORITHM_JWT');
 location.reload();
 ```
 
-</details>
+:::
 
 ---
 
@@ -225,30 +217,24 @@ location.reload();
 **Setup**: Application using RS256 (RSA) algorithm  
 **Goal**: Change to HS256 and use public key as secret
 
-<details>
-<summary>💡 Hint 1: Find the public key</summary>
-
+:::hint 💡 Hint 1: Find the public key
 Look for:
 - `/jwks.json` endpoint
 - `/.well-known/jwks.json`
 - Public key in documentation
 - SSL certificate (sometimes reused)
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 2: Convert RS256 to HS256</summary>
-
+:::hint 💡 Hint 2: Convert RS256 to HS256
 RS256 uses public/private key pair.
 HS256 uses a shared secret.
 
 What if the server accepts HS256 and uses the public key as the secret?
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 3: Sign with public key</summary>
-
+:::hint 💡 Hint 3: Sign with public key
 ```python
 import hmac
 import hashlib
@@ -261,11 +247,9 @@ signature = hmac.new(
 ).digest()
 ```
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 4
 **Step 1**: Get the public key
 ```bash
 # From JWKS endpoint
@@ -310,7 +294,7 @@ curl -H "Authorization: Bearer YOUR_FORGED_JWT" \
      http://target.com/api/admin
 ```
 
-</details>
+:::
 
 ---
 
@@ -319,9 +303,7 @@ curl -H "Authorization: Bearer YOUR_FORGED_JWT" \
 **Setup**: JWT signed with weak secret  
 **Goal**: Crack the secret and forge tokens
 
-<details>
-<summary>💡 Hint 1: Identify the algorithm</summary>
-
+:::hint 💡 Hint 1: Identify the algorithm
 Decode the JWT header. If it's HS256/HS384/HS512, it uses a secret key.
 
 Common weak secrets:
@@ -331,33 +313,27 @@ Common weak secrets:
 - key
 - your-app-name
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 2: Use a wordlist</summary>
-
+:::hint 💡 Hint 2: Use a wordlist
 Try common passwords:
 ```bash
 # Get a wordlist
 wget https://github.com/danielmiessler/SecLists/raw/master/Passwords/Common-Credentials/10-million-password-list-top-10000.txt
 ```
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 3: Automate the attack</summary>
-
+:::hint 💡 Hint 3: Automate the attack
 Tools for JWT cracking:
 - jwt-cracker
 - john the ripper
 - hashcat
 - jwt_tool
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 4
 **Method 1: Using jwt_tool**
 ```bash
 # Install jwt_tool
@@ -409,7 +385,7 @@ for word in wordlist:
 - Application name
 - Company name
 
-</details>
+:::
 
 ---
 
@@ -418,9 +394,7 @@ for word in wordlist:
 **Setup**: JWT with "kid" (Key ID) parameter  
 **Goal**: Exploit kid to read files or inject commands
 
-<details>
-<summary>💡 Hint 1: Understanding kid parameter</summary>
-
+:::hint 💡 Hint 1: Understanding kid parameter
 The "kid" parameter specifies which key was used to sign the JWT:
 ```json
 {
@@ -432,11 +406,9 @@ The "kid" parameter specifies which key was used to sign the JWT:
 
 What if kid is used to read a key file?
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 2: Path traversal in kid</summary>
-
+:::hint 💡 Hint 2: Path traversal in kid
 Try:
 ```json
 {
@@ -446,11 +418,9 @@ Try:
 
 If the server reads the file as a key, you know the contents!
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 3: SQL injection in kid</summary>
-
+:::hint 💡 Hint 3: SQL injection in kid
 Some implementations query a database:
 ```sql
 SELECT key FROM keys WHERE id = 'kid_value'
@@ -458,11 +428,9 @@ SELECT key FROM keys WHERE id = 'kid_value'
 
 Try SQL injection!
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 4
 **Method 1: Path Traversal**
 ```python
 import jwt
@@ -521,7 +489,7 @@ header = {
 token = jwt.encode(payload, '2\n', algorithm='HS256', headers=header)
 ```
 
-</details>
+:::
 
 ---
 
@@ -529,20 +497,16 @@ token = jwt.encode(payload, '2\n', algorithm='HS256', headers=header)
 
 **Goal**: Combine multiple techniques for account takeover
 
-<details>
-<summary>🎯 Challenge Overview</summary>
-
+:::hint 🎯 Hint 1
 Advanced JWT attacks:
 1. JKU/JWK header injection
 2. x5u/x5c certificate injection
 3. JWT cross-service relay
 4. Time-based attacks
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint: JKU exploitation</summary>
-
+:::hint 💡 Hint 2
 JKU specifies where to fetch keys:
 ```json
 {
@@ -553,11 +517,9 @@ JKU specifies where to fetch keys:
 
 What if you can change it?
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 3
 **JKU Header Injection**:
 ```python
 # Step 1: Create your own key pair
@@ -643,7 +605,7 @@ payload["nbf"] = int(time.time()) + 3600  # Valid in 1 hour
 # Exploits poor validation logic
 ```
 
-</details>
+:::
 
 ---
 

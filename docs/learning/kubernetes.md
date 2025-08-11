@@ -109,9 +109,7 @@ Malicious images
 **Setup**: Access to a K8s cluster (kubectl configured)  
 **Goal**: Map the cluster and identify weaknesses
 
-<details>
-<summary>💡 Hint 1: Check your permissions</summary>
-
+:::hint 💡 Hint 1: Check your permissions
 Start by understanding what you can do:
 ```bash
 # Can you list resources?
@@ -124,11 +122,9 @@ kubectl auth can-i create pods --all-namespaces
 
 What level of access do you have?
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 2: Enumerate the cluster</summary>
-
+:::hint 💡 Hint 2: Enumerate the cluster
 Gather information about:
 - Namespaces
 - Service accounts
@@ -138,11 +134,9 @@ Gather information about:
 
 Which namespaces look interesting?
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 3: Check for misconfigurations</summary>
-
+:::hint 💡 Hint 3: Check for misconfigurations
 Look for:
 - Pods running as root
 - Privileged containers
@@ -151,11 +145,9 @@ Look for:
 
 Any security policies enforced?
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 4
 **Reconnaissance Script**:
 ```bash
 #!/bin/bash
@@ -252,7 +244,7 @@ for role in roles.items:
             print(f"  Verbs: {rule.verbs}")
 ```
 
-</details>
+:::
 
 ---
 
@@ -261,20 +253,16 @@ for role in roles.items:
 **Setup**: Limited service account access  
 **Goal**: Escalate privileges through RBAC misconfigurations
 
-<details>
-<summary>💡 Hint 1: Understand RBAC</summary>
-
+:::hint 💡 Hint 1: Understand RBAC
 RBAC consists of:
 - **Roles**: Define permissions
 - **RoleBindings**: Assign roles to users/service accounts
 
 Can you create or modify any of these?
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 2: Check your service account</summary>
-
+:::hint 💡 Hint 2: Check your service account
 Every pod has a service account:
 ```bash
 cat /var/run/secrets/kubernetes.io/serviceaccount/token
@@ -283,21 +271,17 @@ cat /var/run/secrets/kubernetes.io/serviceaccount/namespace
 
 What permissions does it have?
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 3: Look for escalation paths</summary>
-
+:::hint 💡 Hint 3: Look for escalation paths
 Common escalation paths:
 - Can create pods? Mount service account tokens
 - Can create roles? Grant yourself permissions
 - Can edit pods? Add privileged containers
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 4
 **Method 1: Create privileged pod**
 ```yaml
 # If you can create pods
@@ -372,7 +356,7 @@ export TOKEN=$(kubectl exec -n kube-system <admin-pod> -- cat /var/run/secrets/k
 kubectl --token=$TOKEN get secrets -A
 ```
 
-</details>
+:::
 
 ---
 
@@ -381,9 +365,7 @@ kubectl --token=$TOKEN get secrets -A
 **Setup**: Access to a compromised pod  
 **Goal**: Extract sensitive data from the cluster
 
-<details>
-<summary>💡 Hint 1: Check mounted secrets</summary>
-
+:::hint 💡 Hint 1: Check mounted secrets
 Pods often have secrets mounted:
 ```bash
 mount | grep secret
@@ -393,11 +375,9 @@ env | grep -i pass
 
 What's available in your pod?
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 2: Access etcd directly</summary>
-
+:::hint 💡 Hint 2: Access etcd directly
 If you can reach etcd:
 - Default port: 2379
 - Often no authentication
@@ -405,22 +385,18 @@ If you can reach etcd:
 
 Can you access it?
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 3: API server queries</summary>
-
+:::hint 💡 Hint 3: API server queries
 Use the API to list secrets:
 ```bash
 TOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
 curl -k -H "Authorization: Bearer $TOKEN" https://kubernetes.default/api/v1/secrets
 ```
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 4
 **Method 1: Extract all accessible secrets**
 ```bash
 #!/bin/bash
@@ -495,7 +471,7 @@ for secret in secrets:
             print(f"Password: {password}")
 ```
 
-</details>
+:::
 
 ---
 
@@ -504,9 +480,7 @@ for secret in secrets:
 **Setup**: Inside a Kubernetes pod  
 **Goal**: Escape to the underlying node
 
-<details>
-<summary>💡 Hint 1: Check your privileges</summary>
-
+:::hint 💡 Hint 1: Check your privileges
 What security context do you have?
 ```bash
 cat /proc/self/status | grep Cap
@@ -516,33 +490,27 @@ ls -la /var/run/docker.sock
 
 Any privileged access?
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 2: Kubernetes vulnerabilities</summary>
-
+:::hint 💡 Hint 2: Kubernetes vulnerabilities
 Check for:
 - Kubelet API access (port 10250)
 - Container runtime sockets
 - Kernel vulnerabilities
 - Service account tokens
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 3: Node access paths</summary>
-
+:::hint 💡 Hint 3: Node access paths
 Common escape routes:
 - Privileged containers
 - Host namespaces
 - Volume mounts
 - Kubelet exploitation
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 4
 **Method 1: Privileged container escape**
 ```bash
 # If running privileged
@@ -624,7 +592,7 @@ ln -s / /host-root
 # Container escape via kernel vulnerability
 ```
 
-</details>
+:::
 
 ---
 
@@ -632,9 +600,7 @@ ln -s / /host-root
 
 **Goal**: Achieve cluster-admin access from a limited pod
 
-<details>
-<summary>🎯 Challenge Overview</summary>
-
+:::hint 🎯 Hint 1
 Starting from a basic pod with minimal permissions:
 1. Enumerate the cluster
 2. Find privilege escalation path
@@ -642,11 +608,9 @@ Starting from a basic pod with minimal permissions:
 4. Achieve cluster-admin
 5. Maintain persistence
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint: Attack chain</summary>
-
+:::hint 💡 Hint 2
 Think about:
 - Service account tokens
 - RBAC misconfigurations
@@ -655,11 +619,9 @@ Think about:
 
 Chain multiple techniques!
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 3
 **Full Attack Chain**:
 
 **Step 1: Initial enumeration**
@@ -789,7 +751,7 @@ kubectl -n kube-system get pod kube-scheduler-master -o yaml > scheduler.yaml
 kubectl apply -f scheduler.yaml
 ```
 
-</details>
+:::
 
 ---
 

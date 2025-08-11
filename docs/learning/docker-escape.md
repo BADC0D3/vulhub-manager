@@ -105,9 +105,7 @@ PID, Network namespace escape
 **Setup**: Container running with `--privileged` flag  
 **Goal**: Escape to host system
 
-<details>
-<summary>💡 Hint 1: Check your privileges</summary>
-
+:::hint 💡 Hint 1: Check your privileges
 In a privileged container, check:
 ```bash
 # Capabilities
@@ -123,22 +121,18 @@ aa-status
 
 What extra access do you have?
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 2: Mount host filesystem</summary>
-
+:::hint 💡 Hint 2: Mount host filesystem
 Privileged containers can access all devices. Look for:
 - `/dev/sda1` or similar (host disk)
 - `/dev/nvme0n1p1` (NVMe drives)
 
 Can you mount these?
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 3: Kernel modules</summary>
-
+:::hint 💡 Hint 3: Kernel modules
 With privilege, you can:
 - Load kernel modules
 - Access `/proc/sys`
@@ -146,11 +140,9 @@ With privilege, you can:
 
 Think about persistence!
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 4
 **Method 1: Direct disk mount**
 ```bash
 # Inside privileged container
@@ -221,7 +213,7 @@ gdb -p [HOST_PID]
 (gdb) quit
 ```
 
-</details>
+:::
 
 ---
 
@@ -230,9 +222,7 @@ gdb -p [HOST_PID]
 **Setup**: Container with Docker socket mounted  
 **Goal**: Escape using Docker commands
 
-<details>
-<summary>💡 Hint 1: Check Docker access</summary>
-
+:::hint 💡 Hint 1: Check Docker access
 Is the Docker socket mounted?
 ```bash
 ls -la /var/run/docker.sock
@@ -241,11 +231,9 @@ docker ps
 
 If yes, you can control Docker on the host!
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 2: Create privileged container</summary>
-
+:::hint 💡 Hint 2: Create privileged container
 With Docker access, you can:
 - Start new containers
 - With any privileges
@@ -253,21 +241,17 @@ With Docker access, you can:
 
 What would be useful to mount?
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 3: Break out</summary>
-
+:::hint 💡 Hint 3: Break out
 Think about creating a container that:
 - Has full privileges
 - Mounts the host root filesystem
 - Gives you a shell
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 4
 **Method 1: Privileged container with host mount**
 ```bash
 # Inside container with docker.sock
@@ -335,7 +319,7 @@ docker run -d \
   backdoor
 ```
 
-</details>
+:::
 
 ---
 
@@ -344,9 +328,7 @@ docker run -d \
 **Setup**: Container with specific capabilities  
 **Goal**: Exploit capabilities for escape
 
-<details>
-<summary>💡 Hint 1: Enumerate capabilities</summary>
-
+:::hint 💡 Hint 1: Enumerate capabilities
 Check what you have:
 ```bash
 capsh --print
@@ -360,11 +342,9 @@ Key dangerous capabilities:
 - CAP_SYS_MODULE
 - CAP_DAC_READ_SEARCH
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 2: Exploit CAP_SYS_ADMIN</summary>
-
+:::hint 💡 Hint 2: Exploit CAP_SYS_ADMIN
 This capability allows:
 - Mount operations
 - Namespace operations
@@ -372,21 +352,17 @@ This capability allows:
 
 Can you create/enter namespaces?
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 3: PID namespace escape</summary>
-
+:::hint 💡 Hint 3: PID namespace escape
 If you can see host processes:
 - Check `/proc/[pid]/root`
 - Use `nsenter`
 - Inject into processes
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 4
 **Method 1: CAP_SYS_ADMIN abuse**
 ```bash
 # With CAP_SYS_ADMIN
@@ -472,7 +448,7 @@ for ns in mnt uts ipc net pid user; do
 done
 ```
 
-</details>
+:::
 
 ---
 
@@ -481,9 +457,7 @@ done
 **Setup**: Container with sensitive volumes mounted  
 **Goal**: Exploit mounted paths for escape
 
-<details>
-<summary>💡 Hint 1: Enumerate mounts</summary>
-
+:::hint 💡 Hint 1: Enumerate mounts
 Check what's mounted:
 ```bash
 mount | grep -v docker
@@ -494,11 +468,9 @@ ls -la /
 
 Look for unusual mount points!
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 2: Sensitive directories</summary>
-
+:::hint 💡 Hint 2: Sensitive directories
 Common dangerous mounts:
 - `/etc` - System configs
 - `/var/run` - Runtime data
@@ -507,22 +479,18 @@ Common dangerous mounts:
 
 What can you modify?
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint 3: Persistence techniques</summary>
-
+:::hint 💡 Hint 3: Persistence techniques
 With write access to host paths:
 - Cron jobs
 - Systemd services
 - SSH keys
 - User accounts
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 4
 **Method 1: /etc mount exploitation**
 ```bash
 # If /etc is mounted read-write
@@ -586,7 +554,7 @@ echo 0 > /sys/kernel/kptr_restrict
 insmod /path/to/malicious.ko
 ```
 
-</details>
+:::
 
 ---
 
@@ -594,9 +562,7 @@ insmod /path/to/malicious.ko
 
 **Goal**: Escape from a hardened container
 
-<details>
-<summary>🎯 Challenge Overview</summary>
-
+:::hint 🎯 Hint 1
 The container has:
 - No privileges
 - Read-only root filesystem
@@ -606,21 +572,17 @@ The container has:
 
 Can you still escape?
 
-</details>
+:::
 
-<details>
-<summary>💡 Hint: Kernel vulnerabilities</summary>
-
+:::hint 💡 Hint 2
 Even hardened containers share the kernel. Research:
 - Dirty COW (CVE-2016-5195)
 - Dirty Pipe (CVE-2022-0847)
 - Recent kernel CVEs
 
-</details>
+:::
 
-<details>
-<summary>🔓 Solution</summary>
-
+:::hint 🔓 Hint 3
 **Method 1: Dirty Pipe exploitation (CVE-2022-0847)**
 ```c
 // Requires vulnerable kernel < 5.16.11
@@ -729,7 +691,7 @@ for i in range(1000):
 # Analyze for patterns indicating host processes
 ```
 
-</details>
+:::
 
 ---
 
